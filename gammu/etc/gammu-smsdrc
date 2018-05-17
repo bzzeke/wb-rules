@@ -19,4 +19,4 @@ inboxpath = /var/spool/gammu/inbox/
 outboxpath = /var/spool/gammu/outbox/
 sentsmspath = /var/spool/gammu/sent/
 errorsmspath = /var/spool/gammu/error/
-runonreceive = /opt/smsd.sh
+runonreceive = /etc/wb-rules/scripts/smsd.sh

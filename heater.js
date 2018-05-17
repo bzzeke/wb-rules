@@ -6,6 +6,7 @@ defineAlias('Boiler', 'wb-mr14_32/K8');
 
 var heater_counter = 0;
 var start_date = 0;
+var heater_init = false;
 
 var TOUT_THRESHOULD = 30;
 var TEMP_THRESHOULD = 24;
@@ -83,7 +84,7 @@ defineVirtualDevice('thermostat', {
         },
         'Simple': {
             type: 'switch',
-            value: false
+            value: true
         },
         'Work time': {
             type: 'text',
@@ -91,12 +92,10 @@ defineVirtualDevice('thermostat', {
         },
         'Water heater': {
           	type: 'switch',
-          	value: true
+          	value: false
         }
     }
 });
-
-dev['thermostat']['Water heater'] = dev['wb-gpio']['D4_IN'];
 
 defineRule('dl_w_heater_status', {
     whenChanged: ['wb-gpio/D4_IN'],
@@ -104,6 +103,18 @@ defineRule('dl_w_heater_status', {
         dev['thermostat']['Water heater'] = newValue;
     }
 });
+
+
+/*defineRule('dl_w_heater_init', {
+    when: function() {
+        return heater_init == false;
+    },
+    then: function () {
+      	heater_init = true;
+      	dev['thermostat']['Water heater'] = dev['wb-gpio']['D4_IN'];
+    }
+});
+*/
 
 defineRule('dl_w_heater', {
     whenChanged: ['thermostat/Water heater'],

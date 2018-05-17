@@ -19,13 +19,13 @@ defineRule("doClick", {
     return timers.clickTimer.firing;
   },
   then: function () {
-    runShellCommand("upsc ups@192.168.34.6 | grep battery.charge: | awk '{print $2}'", {
+    runShellCommand("/etc/wb-rules/scripts/ups.sh charge", {
       captureOutput: true,
       exitCallback: function (exitCode, capturedOutput) {
 		dev['ups']['Battery charge'] = capturedOutput;
       }
     });	
-    runShellCommand("upsc ups@192.168.34.6 | grep input.voltage: | awk '{print $2}'", {
+    runShellCommand("/etc/wb-rules/scripts/ups.sh voltage", {
       captureOutput: true,
       exitCallback: function (exitCode, capturedOutput) {
 		dev['ups']['Input voltage'] = capturedOutput;

@@ -1,7 +1,7 @@
 - Install gammu-smsd:
 `apt-get install gammu-smsd`
 - Copy config
-- Copy `smsd.sh` and private key to `/opt`. Create `g.log` in `/opt` and chmod it to 666
+- Copy private key to `/etc/wb-rules/scripts/keys/mikrotik`. Create `gammu.log` in `/etc/wb-rules/scripts/log` and chmod it to 666
 - Create gammu user directory
 ```
 mkdir -p /var/lib/gammu

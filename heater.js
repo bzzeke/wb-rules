@@ -88,7 +88,7 @@ defineVirtualDevice('thermostat', {
         },
         'Work time': {
             type: 'text',
-            value: ''
+            value: '0'
         },
         'Water heater': {
           	type: 'switch',

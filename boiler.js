@@ -1,19 +1,23 @@
-defineAlias('Pump_1', 'wb-mr14_32/K2');
-defineAlias('Pump_2', 'wb-mr14_32/K1');
-defineAlias('Pump_Basement', 'wb-mr14_32/K3');
-defineAlias('Pump_Boiler', 'wb-mr14_32/K4');
-defineAlias('Boiler', 'wb-mr14_32/K8');
+var relays = {
+    'pump1': 'wb-mr14_32/K2',
+    'pump2': 'wb-mr14_32/K1',
+    'pumpBasement': 'wb-mr14_32/K3',
+    'pumpBoiler': 'wb-mr14_32/K4',
+    'boiler': 'wb-mr14_32/K8',
+}
 
-var heater_counter = 0;
-var start_date = 0;
-var heater_init = false;
+var sensors = {
+    'floor1': 'wb-w1/28-0014175e3eff',
+    'floor2': 'wb-w1/28-00141743b2ff',
+    'basement': 'wb-w1/28-00141737fdff',
+    'garret': 'wb-w1/28-001416f342ff',
+    'outside': 'wb-w1/28-001417357bff',
+    'boiler': 'wb-w1/28-001416e9e7ff',
+    'bathhouse': 'wb-w1/28-0014175dd1ff',
+    'pressure': 'wb-adc/A2'
+};
 
-var TOUT_THRESHOULD = 30;
-var TEMP_THRESHOULD = 24;
-var HYSTERESIS_UP = 0;
-var HYSTERESIS_DOWN = 0.1;
-
-var GLOBALMAP = {
+var devicesByTemperature = {
     'Floor 1 Temperature': {
         relay: 'K2',
         thermo: 'Floor_1'
@@ -27,6 +31,21 @@ var GLOBALMAP = {
         thermo: 'Basement'
     }
 };
+
+defineAlias('pump1', relays.pump1);
+defineAlias('pump2', relays.pump2);
+defineAlias('pumpBasement', relays.pumpBasement);
+defineAlias('pumpBoiler', relays.pumpBoiler);
+defineAlias('boiler', relays.boiler);
+
+var heater_counter = 0;
+var start_date = 0;
+
+var TOUT_THRESHOULD = 30;
+var TEMP_THRESHOULD = 24;
+var HYSTERESIS_UP = 0;
+var HYSTERESIS_DOWN = 0.1;
+
 
 defineVirtualDevice('thermostat', {
     title: 'Thermostat', //
@@ -89,45 +108,12 @@ defineVirtualDevice('thermostat', {
         'Work time': {
             type: 'text',
             value: '0'
-        },
-        'Water heater': {
-          	type: 'switch',
-          	value: false
         }
     }
 });
 
-defineRule('dl_w_heater_status', {
-    whenChanged: ['wb-gpio/D4_IN'],
-    then: function (newValue, devName, cellName) {
-        dev['thermostat']['Water heater'] = newValue;
-    }
-});
-
-
-/*defineRule('dl_w_heater_init', {
-    when: function() {
-        return heater_init == false;
-    },
-    then: function () {
-      	heater_init = true;
-      	dev['thermostat']['Water heater'] = dev['wb-gpio']['D4_IN'];
-    }
-});
-*/
-
-defineRule('dl_w_heater', {
-    whenChanged: ['thermostat/Water heater'],
-    then: function (newValue, devName, cellName) {
-		dev['wb-gpio/Relay_1'] = 1;
-      	setTimeout(function() {
-          dev['wb-gpio/Relay_1'] = 0;
-        }, 1000);
-    }
-});
-
-defineRule('dl_counter', {
-    whenChanged: ['wb-mr14_32/K8'],
+defineRule('th.counter', {
+    whenChanged: [relays.boiler],
     then: function (newValue, devName, cellName) {
         if (newValue == 1) {
             start_date = Math.floor(Date.now() / 1000);
@@ -138,7 +124,7 @@ defineRule('dl_counter', {
     }
 });
 
-defineRule("dl_cron", {
+defineRule("th.counterSummary", {
     when: cron("@midnight"),
     then: function () {
         if (start_date != 0) {
@@ -150,32 +136,35 @@ defineRule("dl_cron", {
     }
 });
 
-defineRule('dl_manage_pumps_by_temp', {
-//  whenChanged: ['thermostat/Floor 1', 'thermostat/Floor 2', 'thermostat/Basement'], // debug
-    whenChanged: ['thermostat/Floor 1 Temperature', 'thermostat/Floor 2 Temperature', 'thermostat/Basement Temperature'], // production
+defineRule('th.switchPumpsByTemperature', {
+    whenChanged: [
+        'thermostat/Floor 1 Temperature', 
+        'thermostat/Floor 2 Temperature', 
+        'thermostat/Basement Temperature'
+    ],
     then: function (newValue, devName, cellName) {
-  
         if (!dev['thermostat']['Enabled']) {
             return;
         }
-
         if (dev['thermostat']['Simple']) {
             managePumpSimple();
         } else {
-            var thermo = dev['thermostat'][GLOBALMAP[cellName]['thermo']]; // production
+            var thermo = dev['thermostat'][devicesByTemperature[cellName]['thermo']]; // production
             managePumps(newValue, thermo, cellName);        
         }
     }
 });
 
-defineRule('dl_manage_pumps_by_thermo', {
-    whenChanged: ['thermostat/Floor_1', 'thermostat/Floor_2', 'thermostat/Basement'],
+defineRule('th.switchPumpsByThermostat', {
+    whenChanged: [
+        'thermostat/Floor_1', 
+        'thermostat/Floor_2', 
+        'thermostat/Basement'
+    ],
     then: function (newValue, devName, cellName) {
- 
         if (!dev['thermostat']['Enabled']) {
             return;
         }
-
         var map = {
             'Floor_1': 'Floor 1 Temperature',
             'Floor_2': 'Floor 2 Temperature',
@@ -193,104 +182,106 @@ defineRule('dl_manage_pumps_by_thermo', {
     }
 });
 
-defineRule('dl_set_temperature', {
+defineRule('th.displayTemperature', {
     whenChanged: [
-      'wb-w1/28-0014175e3eff',
-      'wb-w1/28-00141743b2ff',
-      'wb-w1/28-00141737fdff',
-      'wb-w1/28-001416f342ff',
-      'wb-w1/28-001417357bff',
-      'wb-w1/28-001416e9e7ff',
-      'wb-w1/28-0014175dd1ff'
+      sensors.floor1,
+      sensors.floor2,
+      sensors.basement,
+      sensors.boiler,
+      sensors.garret,
+      sensors.outside,
+      sensors.bathhouse
     ],
     then: function (newValue, devName, cellName) {
-        var map = {
-            '28-0014175e3eff': 'Floor 1 Temperature',
-            '28-00141743b2ff': 'Floor 2 Temperature',
-            '28-00141737fdff': 'Basement Temperature',
-            '28-001416f342ff': 'Garret Temperature',
-            '28-001417357bff': 'Outside Temperature',
-            '28-001416e9e7ff': 'Boiler Out Temperature',
-            '28-0014175dd1ff': 'Bath House Temperature'          
-        };
-        dev.thermostat[map[cellName]] = newValue;
+        var map = {}
+        map[sensors.floor1] = 'Floor 1 Temperature';
+        map[sensors.floor2] = 'Floor 2 Temperature';
+        map[sensors.basement] = 'Basement Temperature';
+        map[sensors.garret] = 'Garret Temperature';
+        map[sensors.outside] = 'Outside Temperature';
+        map[sensors.boiler] = 'Boiler Out Temperature';
+        map[sensors.bathhouse] = 'Bath House Temperature';
+        
+        dev.thermostat[map[devName + '/' + cellName]] = newValue;
     }
 });
 
-defineRule('dl_set_pressure', {
-    whenChanged: [
-		'wb-adc/A2'
-    ],
+defineRule('th.displayPressure', {
+    whenChanged: [sensors.pressure],
     then: function (newValue, devName, cellName) {
       	var coefficient = 0.8;
-      	var shift = 0.5;
+        var shift = 0.5;
+          
         dev.thermostat['Pressure'] = (coefficient * newValue + shift).toFixed(1);
     }
 });
 
-defineRule('dl_check_boiler_pump', {
+defineRule('th.checkPressure', {
+    whenChanged: [
+        'thermostat/Pressure'
+    ],
+    then: function (newValue, devName, cellName) {
+        if (!dev['thermostat']['Enabled']) {
+            return;
+        }		      
+        var lowThreshould = 1;
+        if (newValue < lowThreshould) {
+            dev['thermostat']['Enabled'] = 0;
+        }
+    }
+});
+
+defineRule('th.checkBoilerPump', {
     when: function() {
-        return Boiler == 1 && Pump_Boiler == 0;
+        return boiler == 1 && pumpBoiler == 0;
     },
     then: function (newValue, devName, cellName) {
-        Pump_Boiler = 1;
+        pumpBoiler = 1;
     }
 });
 
 
-defineRule('dl_low_pressure', {
-    whenChanged: 'thermostat/Pressure',
+defineRule('th.checkBoilerTemperature', {
+    whenChanged: [
+        'thermostat/Boiler Out Temperature'
+    ],
     then: function (newValue, devName, cellName) {
         if (!dev['thermostat']['Enabled']) {
             return;
-        }
-		var low_threshould = 1;
-      	if (newValue < low_threshould) {
-			dev['thermostat']['Enabled'] = 0;
+        }        
+        if (boiler == 0 && newValue < TOUT_THRESHOULD) {
+            pump1 = 0;
+            pump2 = 0;      
+            pumpBasement = 0;      
+            pumpBoiler = 0;
         }
     }
 });
 
-defineRule('dl_boiler_in_temperature', {
-//  whenChanged: 'tout/temp', // debug
-    whenChanged: 'thermostat/Boiler Out Temperature', // production
+defineRule("th.shutdownBoiler", {
+    whenChanged: "thermostat/Enabled",
     then: function (newValue, devName, cellName) {
-        if (!dev['thermostat']['Enabled']) {
-            return;
-        }
-        if ( Boiler == 0 && newValue < TOUT_THRESHOULD ) {
-            Pump_1 = 0;
-            Pump_2 = 0;      
-            Pump_Basement = 0;      
-            Pump_Boiler = 0;
+        if (newValue == false) {
+            switchBoiler(false);
+            pump1 = 0;
+            pump2 = 0;
+            pumpBasement = 0;
+            pumpBoiler = 0;
         }
     }
-});
-
-defineRule("dl_heater_shutdown", {
-  whenChanged: "thermostat/Enabled",
-  then: function (newValue, devName, cellName) {
-	if (newValue == false) {
-      	switchBoiler(false);
-      	Pump_1 = 0;
-      	Pump_2 = 0;
-        Pump_Basement = 0;
-      	Pump_Boiler = 0;
-    }
-  }
 });
 
 function pumpsEnabled()
 {
     var c = 0;
 
-    if (Pump_1 == 1) {
+    if (pump1 == 1) {
         c++;
     }
-    if (Pump_2 == 1) {
+    if (pump2 == 1) {
         c++;
     }
-    if (Pump_Basement == 1) {
+    if (pumpBasement == 1) {
         c++;
     }
     return c;
@@ -298,17 +289,17 @@ function pumpsEnabled()
 
 function switchBoiler(enable)
 {
-    if (enable && Boiler == 0) {
-        Boiler = 1;
-        Pump_Boiler = 1;
-    } else if (!enable && Boiler == 1) {
-        Boiler = 0;    
+    if (enable && boiler == 0) {
+        boiler = 1;
+        pumpBoiler = 1;
+    } else if (!enable && boiler == 1) {
+        boiler = 0;
     }
 }
 
 function pumpValueByTemp(cellName, value)
 {
-    var relay = GLOBALMAP[cellName]['relay'];
+    var relay = devicesByTemperature[cellName]['relay'];
 
     if (value === undefined) {
         return dev['wb-mr14_32'][relay];
@@ -346,4 +337,3 @@ function managePumpSimple()
         switchBoiler(false);
     }  
 }
-

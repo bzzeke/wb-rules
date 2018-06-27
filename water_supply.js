@@ -10,7 +10,7 @@ defineAlias('waterHeaterStatus', waterSupply.heaterStatus);
 defineAlias('waterHeaterRelay', waterSupply.heaterRelay);
 defineAlias('waterPressure', waterSupply.pressure);
 
-defineVirtualDevice('waterSupply', {
+defineVirtualDevice('water_supply', {
     title: 'Water supply',
     cells: {
         'Heater': {
@@ -34,7 +34,7 @@ defineRule('ws.pressure', {
     then: function (newValue, devName, cellName) {
       	var coefficient = 0.8;
       	var shift = 0.5;
-        dev.waterSupply['Pressure'] = (coefficient * newValue + shift).toFixed(1);
+        dev.water_supply['Pressure'] = (coefficient * newValue + shift).toFixed(1);
     }
 });
 
@@ -44,19 +44,19 @@ defineRule('ws.leak', {
     ],
     then: function (newValue, devName, cellName) {
         var threshold = 8;
-        dev.waterSupply['Leak'] = newValue >= threshold;
+        dev.water_supply['Leak'] = newValue >= threshold;
     }
 });
 
 defineRule('ws.heaterStatus', {
     whenChanged: [waterSupply.heaterStatus],
     then: function (newValue, devName, cellName) {
-        dev.waterSupply['Heater'] = newValue;
+        dev.water_supply['Heater'] = newValue;
     }
 });
 
 defineRule('ws.switchHeater', {
-    whenChanged: ['waterSupply/Heater'],
+    whenChanged: ['water_supply/Heater'],
     then: function (newValue, devName, cellName) {
 		waterHeaterRelay = 1;
       	setTimeout(function() {
@@ -71,6 +71,6 @@ defineRule('ws.initHeaterStatus', {
     },
     then: function () {
         heaterInit = true;
-      	dev.waterSupply['Heater'] = waterHeaterStatus;
+      	dev.water_supply['Heater'] = waterHeaterStatus;
     }
 });

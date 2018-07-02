@@ -1,4 +1,5 @@
 var heaterInit = false;
+var heaterStatusChanged = false;
 var waterSupply = {
     'heaterStatus': 'wb-gpio/MOD2_IN3',
     'heaterRelay': 'wb-gpio/MOD1_OUT1',
@@ -14,8 +15,8 @@ defineVirtualDevice('water_supply', {
     title: 'Water supply',
     cells: {
         'Heater': {
-          	type: 'switch',
-          	value: false
+              type: 'switch',
+              value: false
         },
         'Pressure' : {
             type : 'text',
@@ -32,15 +33,15 @@ defineVirtualDevice('water_supply', {
 defineRule('ws.pressure', {
     whenChanged: [waterSupply.pressure],
     then: function (newValue, devName, cellName) {
-      	var coefficient = 0.8;
-      	var shift = 0.5;
+        var coefficient = 0.8;
+        var shift = 0.5;
         dev.water_supply['Pressure'] = (coefficient * newValue + shift).toFixed(1);
     }
 });
 
 defineRule('ws.leak', {
     whenChanged: [
-      waterSupply.leak,
+        waterSupply.leak,
     ],
     then: function (newValue, devName, cellName) {
         var threshold = 8;
@@ -51,6 +52,9 @@ defineRule('ws.leak', {
 defineRule('ws.heaterStatus', {
     whenChanged: [waterSupply.heaterStatus],
     then: function (newValue, devName, cellName) {
+        if (newValue != dev.water_supply['Heater']) {
+            heaterStatusChanged = true;
+        }
         dev.water_supply['Heater'] = newValue;
     }
 });
@@ -58,10 +62,14 @@ defineRule('ws.heaterStatus', {
 defineRule('ws.switchHeater', {
     whenChanged: ['water_supply/Heater'],
     then: function (newValue, devName, cellName) {
-		waterHeaterRelay = 1;
-      	setTimeout(function() {
-            waterHeaterRelay = 0;
-        }, 1000);
+        if (heaterStatusChanged) {
+            heaterStatusChanged = false;
+        } else {
+            waterHeaterRelay = 1;
+            setTimeout(function() {
+                waterHeaterRelay = 0;
+            }, 1000);
+        }
     }
 });
 
@@ -71,6 +79,8 @@ defineRule('ws.initHeaterStatus', {
     },
     then: function () {
         heaterInit = true;
-      	dev.water_supply['Heater'] = waterHeaterStatus;
+        heaterStatusChanged = true;
+        dev.water_supply['Heater'] = waterHeaterStatus;
     }
 });
+

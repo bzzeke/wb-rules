@@ -35,7 +35,10 @@ defineRule('ws.pressure', {
     then: function (newValue, devName, cellName) {
         var coefficient = 0.8;
         var shift = 0.5;
-        dev.water_supply['Pressure'] = (coefficient * newValue + shift).toFixed(1);
+        var pressure = (coefficient * newValue + shift).toFixed(1);
+        if (pressure != dev.water_supply['Pressure']) {
+            dev.water_supply['Pressure'] = pressure;
+        }
     }
 });
 
@@ -45,7 +48,10 @@ defineRule('ws.leak', {
     ],
     then: function (newValue, devName, cellName) {
         var threshold = 8;
-        dev.water_supply['Leak'] = newValue >= threshold;
+        var leak_status = newValue >= threshold;
+        if (leak_status != dev.water_supply['Leak']) {
+            dev.water_supply['Leak'] = leak_status;
+        }
     }
 });
 

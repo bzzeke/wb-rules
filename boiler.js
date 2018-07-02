@@ -211,8 +211,10 @@ defineRule('th.displayPressure', {
     then: function (newValue, devName, cellName) {
       	var coefficient = 0.8;
         var shift = 0.5;
-          
-        dev.thermostat['Pressure'] = (coefficient * newValue + shift).toFixed(1);
+        var pressure = (coefficient * newValue + shift).toFixed(1);
+        if (pressure != dev.thermostat['Pressure']) {
+            dev.thermostat['Pressure'] = pressure;
+        }
     }
 });
 

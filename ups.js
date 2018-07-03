@@ -5,12 +5,16 @@ defineVirtualDevice('ups', {
     cells: {
         'Battery charge' : {
             type : 'text',
-          	value: 'test'
+          	value: ''
         },
         'Input voltage' : {
             type : 'text',
-          	value: 'test'
-        } 
+          	value: ''
+        },
+        'Status' : {
+            type : 'text',
+          	value: ''
+        },      
     }
 });
 
@@ -30,6 +34,15 @@ defineRule("doClick", {
       exitCallback: function (exitCode, capturedOutput) {
 		dev['ups']['Input voltage'] = capturedOutput;
       }
+    });
+    runShellCommand("/etc/wb-rules/scripts/ups.sh status", {
+      captureOutput: true,
+      exitCallback: function (exitCode, capturedOutput) {
+        capturedOutput = capturedOutput.replace(/[ \t\n]/, '');
+		dev['ups']['Status'] = (capturedOutput == 'OL' ? 'Online' : (capturedOutput == 'OB' ? 'Battery' : 'Low battery'));
+      }
     });	    
+
+    
   }
 });

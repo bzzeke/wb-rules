@@ -11,6 +11,6 @@ defineVirtualDevice('util', {
 defineRule("_synology_home_mode", {
   whenChanged: "util/Occupancy",
   then: function (newValue, devName, cellName) {
-    runShellCommand("/etc/wb-rules/scripts/homemode.sh " + ((newValue == 1) ? 'on' : 'off'));
+    runShellCommand("/etc/wb-rules/scripts/homemode.py " + ((newValue == 1) ? 'on' : 'off'));
   }
 });

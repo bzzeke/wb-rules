@@ -6,7 +6,10 @@ import util
 
 def log(text):
     with open(os.environ['SMSD_LOG'], 'a') as file:
-        file.write(text)
+        file.write(text + '\n')
+
+def send(text):
+    return subprocess.check_output('gammu-smsd-inject TEXT %s -text "%s"' % (os.environ['PHONE'], text), stderr=subprocess.STDOUT, shell=True)
 
 # Check for sender number
 if os.environ['SMS_1_NUMBER'] != os.environ['PHONE']:
@@ -15,22 +18,19 @@ if os.environ['SMS_1_NUMBER'] != os.environ['PHONE']:
 # Handle commands
 if os.environ['SMS_1_TEXT'] == 'reboot':
 
-    res = subprocess.Popen('ssh -i %s %s "/system reboot" 2>&1' % (os.environ['MIKROTIK_KEY'], os.environ['MIKROTIK_URL']))
-    output = res.communicate()[0]
-    text = ''
-
-    if res.returncode == 0:
-        text = 'Rebooted successfuly [%s]' % (output)
-    elif res.returncode == 1:
-        text = 'Failed to reboot [%s]' % (output)
+    try:
+        output = subprocess.check_output('ssh -i %s %s "/system reboot"' % (os.environ['MIKROTIK_KEY'], os.environ['MIKROTIK_URL']), stderr=subprocess.STDOUT, shell=True)
+    except subprocess.CalledProcessError as exc:
+        text = 'Failed to reboot [%s %s]' % (output.decode(), exc.output.decode())
     else:
-        text = 'Other problem [%s]' % (output)
+        text = 'Rebooted successfuly [%s]' % (output.decode())
 
     log(text)
+    output = send(text)
+    log(output.decode())
 
-    res = subprocess.Popen('gammu-smsd-inject TEXT %s -text "%s" 2>&1' % (os.environ['PHONE'], text))
-
-    log(res.communicate()[0])
-
-elif os.environ['SMS_1_TEXT'] == 'stats':
-    log('stats')
+elif os.environ['SMS_1_TEXT'] == 'ping':
+    text = 'pong'
+    log(text)
+    output = send(text)
+    log(output.decode())

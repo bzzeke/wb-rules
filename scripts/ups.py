@@ -19,7 +19,7 @@ except subprocess.CalledProcessError as ex:
     result['error'] = ex.output.decode().strip()
 else:
     for line in res.splitlines():
-        parts = line.decode().split(':', 2);
+        parts = line.decode().split(':', 1);
         if parts[0] in fields:
             result[parts[0]] = parts[1].strip()
 

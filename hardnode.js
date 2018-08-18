@@ -28,8 +28,8 @@ defineRule("doHnClick", {
       exitCallback: function (exitCode, capturedOutput) {
         var data = JSON.parse(capturedOutput);
 		dev['hardnode']['CPU temperature'] = data['cpu_temp'];
-		dev['hardnode']['Fan1 speed'] = data['fans'][0];
-		dev['hardnode']['Fan2 speed'] = data['fans'][1];        
+		dev['hardnode']['Fan1 speed'] = data['fans'][0] || 0;
+		dev['hardnode']['Fan2 speed'] = data['fans'][1] || 0;
       }
     });	        
   }

@@ -31,10 +31,15 @@ defineRule("doClick", {
       captureOutput: true,
       exitCallback: function (exitCode, capturedOutput) {
         var data = JSON.parse(capturedOutput);
-		dev['ups']['Battery charge'] = data['battery.charge'];
-		dev['ups']['Input voltage'] = data['input.voltage'];
-        dev['ups']['Load'] = data['ups.load'] + '%';
-		dev['ups']['Status'] = (data['ups.status'] == 'OL' ? 'Online' : (data['ups.status'] == 'OB' ? 'Battery' : 'Low battery'));
+		dev['ups']['Battery charge'] = data['battery.charge'] || 0;
+		dev['ups']['Input voltage'] = data['input.voltage'] || 0;
+        dev['ups']['Load'] = data['ups.load'] ? data['ups.load'] + '%' : 0;
+        
+        if (data['ups.status']) {
+			dev['ups']['Status'] = (data['ups.status'] == 'OL' ? 'Online' : (data['ups.status'] == 'OB' ? 'Battery' : 'Low battery'));
+        } else if (data['error']) {
+          	dev['ups']['Status'] = data['error'];
+        }
       }
     });	        
   }

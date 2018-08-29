@@ -9,7 +9,7 @@ def log(text):
         file.write(text + '\n')
 
 def send(text):
-    return subprocess.check_output('gammu-smsd-inject TEXT %s -text "%s"' % (os.environ['PHONE'], text), stderr=subprocess.STDOUT, shell=True)
+    return subprocess.check_output('gammu-smsd-inject TEXT %s -text "%s" -unicode' % (os.environ['PHONE'], text), stderr=subprocess.STDOUT, shell=True)
 
 # Check for sender number
 if os.environ['SMS_1_NUMBER'] != os.environ['PHONE']:

@@ -1,4 +1,4 @@
-startTicker("hnTimer", 5000);
+startTicker("hnTimer", 10000);
 
 defineVirtualDevice('hardnode', {
     title: 'Hardnode',

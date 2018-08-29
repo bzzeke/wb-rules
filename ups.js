@@ -1,4 +1,4 @@
-startTicker("clickTimer", 5000);
+startTicker("clickTimer", 10000);
 
 defineVirtualDevice('ups', {
     title: 'UPS',
@@ -36,7 +36,7 @@ defineRule("doClick", {
         dev['ups']['Load'] = data['ups.load'] ? data['ups.load'] + '%' : 0;
         
         if (data['ups.status']) {
-			dev['ups']['Status'] = (data['ups.status'] == 'OL' ? 'Online' : (data['ups.status'] == 'OB' ? 'Battery' : 'Low battery'));
+			dev['ups']['Status'] = (data['ups.status'] == 'OL' || data['ups.status'] == 'OL CHRG' ? 'Online' : (data['ups.status'] == 'OB' ? 'Battery' : 'Low battery'));
         } else if (data['error']) {
           	dev['ups']['Status'] = data['error'];
         }

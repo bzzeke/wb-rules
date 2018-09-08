@@ -34,3 +34,28 @@ elif os.environ['SMS_1_TEXT'] == 'ping':
     log(text)
     output = send(text)
     log(output.decode())
+
+elif os.environ['SMS_1_TEXT'] == 'reboot_switch':
+    try:
+        output = subprocess.check_output('%s/unify.py reboot' % (os.path.dirname(os.path.realpath(__file__))), stderr=subprocess.STDOUT, shell=True)
+    except subprocess.CalledProcessError as exc:
+        text = 'Failed to reboot switch [%s]' % (exc.output.decode())
+    else:
+        text = 'Switch rebooted successfuly [%s]' % (output.decode())
+
+    log(text)
+    output = send(text)
+    log(output.decode())
+
+elif os.environ['SMS_1_TEXT'] == 'switch_ports':
+    try:
+        output = subprocess.check_output('%s/unify.py switch_ports' % (os.path.dirname(os.path.realpath(__file__))), stderr=subprocess.STDOUT, shell=True)
+    except subprocess.CalledProcessError as exc:
+        text = 'Failed to switch ports [%s]' % (exc.output.decode())
+    else:
+        text = 'Ports switched successfuly [%s]' % (output.decode())
+
+    log(text)
+    output = send(text)
+    log(output.decode())
+

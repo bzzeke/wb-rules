@@ -2,7 +2,7 @@ var heaterInit = false;
 var heaterStatusChanged = false;
 var waterSupply = {
     'heaterStatus': 'wb-gpio/MOD2_IN3',
-    'heaterRelay': 'wb-gpio/MOD1_OUT1',
+    'heaterRelay': 'wb-gpio/EXT1_ON1',
     'pressure': 'wb-adc/A3',
     'leak': 'wb-adc/A4'
 };

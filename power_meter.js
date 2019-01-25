@@ -44,9 +44,9 @@ defineRule('pm.power', {
 		if (cellName == 'Total AP energy') {
             var d = new Date();
             if (d.getHours() >= dayStart && d.getHours() <= dayEnd) {
-                dev['power_meter']['Total power day'] = initialValueDay + newValue - dev['power_meter']['Total power night'];
+                dev['power_meter']['Total power day'] = initialValueDay + newValue - dev['power_meter']['Total power night'] + initialValueNight;
             } else {
-                dev['power_meter']['Total power night'] = initialValueNight + newValue - dev['power_meter']['Total power day'];
+                dev['power_meter']['Total power night'] = initialValueNight + newValue - dev['power_meter']['Total power day'] + initialValueDay;
             }
           	dev['power_meter']['Total power'] = newValue;
         } else {
@@ -69,6 +69,3 @@ defineRule('pm.lines', {
 		dev['power_meter'][params[1]] = values.join(' | ');
     }
 });
-
-
-

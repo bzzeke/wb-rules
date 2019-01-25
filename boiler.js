@@ -3,7 +3,7 @@ var relays = {
     'pump2': 'wb-mr14_32/K1',
     'pumpBasement': 'wb-mr14_32/K3',
     'pumpBoiler': 'wb-mr14_32/K4',
-    'boiler': 'wb-mr14_32/K8',
+    'boiler': 'wb-gpio/MOD1_OUT1',
 }
 
 var sensors = {
@@ -105,6 +105,10 @@ defineVirtualDevice('thermostat', {
             type: 'switch',
             value: true
         },
+        'Periodical': {
+            type: 'switch',
+            value: false
+        },        
         'Work time': {
             type: 'text',
             value: '0'
@@ -209,7 +213,7 @@ defineRule('th.displayTemperature', {
 defineRule('th.displayPressure', {
     whenChanged: [sensors.pressure],
     then: function (newValue, devName, cellName) {
-      	var coefficient = 1.30459;
+        var coefficient = 1.30459;
         var shift = -0.500871;
         var pressure = (coefficient * newValue + shift).toFixed(1);
         if (pressure != dev.thermostat['Pressure']) {
@@ -223,12 +227,13 @@ defineRule('th.checkPressure', {
         'thermostat/Pressure'
     ],
     then: function (newValue, devName, cellName) {
-        if (!dev['thermostat']['Enabled']) {
+        /*if (!dev['thermostat']['Enabled']) {
             return;
-        }		      
-        var lowThreshould = 1;
+        }*/           
+        var lowThreshould = 0.2;
         if (newValue < lowThreshould) {
             dev['thermostat']['Enabled'] = 0;
+            dev['thermostat']['Periodical'] = 0;
         }
     }
 });
@@ -248,9 +253,9 @@ defineRule('th.checkBoilerTemperature', {
         'thermostat/Boiler Out Temperature'
     ],
     then: function (newValue, devName, cellName) {
-        if (!dev['thermostat']['Enabled']) {
+        /*if (!dev['thermostat']['Enabled']) {
             return;
-        }        
+        } */       
         if (boiler == 0 && newValue < TOUT_THRESHOULD) {
             pump1 = 0;
             pump2 = 0;      
@@ -272,6 +277,59 @@ defineRule("th.shutdownBoiler", {
         }
     }
 });
+
+
+defineRule('th.checkPeriodical', {
+    whenChanged: [
+        'thermostat/Periodical'
+    ],
+    then: function (newValue, devName, cellName) {
+        if (newValue == true) {
+            dev['thermostat']['Enabled'] = 0;
+        } else {
+            switchBoiler(false);
+            pump1 = 0;
+            pump2 = 0;
+            pumpBasement = 0;
+            pumpBoiler = 0;     
+    }
+    }
+});
+
+defineRule("th.enablePeriodical", {
+    asSoonAs: 
+        function () {
+        if (dev['thermostat']['Periodical'] == 0) {
+        return false;
+        }
+            var date = new Date();
+            return (date.getMinutes() >= 0 && date.getMinutes() < 20) || (date.getMinutes() >= 30 && date.getMinutes() < 50);
+        }
+    ,
+    then: function () {
+        pumpValueByTemp('Floor 1 Temperature', 1);
+        pumpValueByTemp('Floor 2 Temperature', 1);
+        pumpValueByTemp('Basement Temperature', 1);
+        switchBoiler(true);
+    }
+});
+
+
+defineRule("th.disablePeriodical", {
+    asSoonAs: 
+        function () {
+        if (dev['thermostat']['Periodical'] == 0) {
+        return false;
+        }
+            var date = new Date();
+            return (date.getMinutes() >= 20 && date.getMinutes() < 30) || (date.getMinutes() >= 50 && date.getMinutes() < 60);
+        }
+    ,
+    then: function () {
+        switchBoiler(false);
+    }
+});
+
 
 function pumpsEnabled()
 {
@@ -339,3 +397,4 @@ function managePumpSimple()
         switchBoiler(false);
     }  
 }
+

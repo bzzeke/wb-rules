@@ -1,0 +1,12 @@
+[Unit]
+Description=SMSD service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/wb-rules/scripts
+ExecStart=/etc/wb-rules/scripts/server.py -d /dev/ttyGSM
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

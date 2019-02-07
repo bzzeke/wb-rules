@@ -2,7 +2,7 @@
 import subprocess
 import json
 import os
-import util
+import lib.util
 
 fields = [
     'battery.charge',

@@ -2,7 +2,7 @@
 import subprocess
 import json
 import os
-import util
+import lib.util
 
 temp_sensors = [
     'Core 0',
@@ -28,10 +28,10 @@ except subprocess.CalledProcessError as ex:
     temp = 999000
 else:
     for line in res.splitlines():
-        parts = line.decode().split(' ', 1);
+        parts = line.decode().split(' ', 1)
         fields[parts[0].strip()] = parts[1].strip()
 
-    for field in fields:        
+    for field in fields:
         if fields[field] in temp_sensors:
             if int(fields[field.replace('Device', 'Value')]) > temp:
                 temp = int(fields[field.replace('Device', 'Value')])

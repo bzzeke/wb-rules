@@ -1,7 +1,7 @@
 import subprocess
 import json
 import os
-import util
+import lib.util
 from client import send_sms
 
 class Processor():

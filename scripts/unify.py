@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 import json
 import os
-import util
+import lib.util
 import urllib.request
 import ssl
 import time
-import util
 import argparse
 import sys
 

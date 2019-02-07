@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import subprocess
 import os
-import util
+import lib.util
 import sys
 import argparse
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import syslog
 import sys
 import socket
@@ -14,33 +14,40 @@ def send_sms(number, text):
         sock.sendall(json.dumps({
             "number": number,
             "text": text
-        }))
+        }).encode('utf-8'))
         data = sock.recv(1024)
-        if (data == "OK"):
+        if (data == b"OK"):
             syslog.syslog("SMSD client: message was put to queue")
-        else:
-            syslog.syslog(syslog.LOG_ERR, "SMSD client: message was not put to queue")
+            return True
+
+        syslog.syslog(syslog.LOG_ERR, "SMSD client: message was not put to queue")
     except Exception as e:
         syslog.syslog(syslog.LOG_ERR, "SMSD client: %s" %e)
+        raise
+
+    return False
 
 def main():
     number = ""
     text = ""
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"n:")
+        opts, args = getopt.getopt(sys.argv[1:],"t:n:")
     except getopt.GetoptError as err:
         print("client.py -n <number>")
         sys.exit(2)
     if (not opts):
-        print("server.py -n <number>")
+        print("client.py -n <number>")
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == "-n":
             number = arg
+        if opt == "-t":
+            text = arg
 
-    text = "".join(sys.stdin.readlines()).strip()
+    if (text == ""):
+        text = "".join(sys.stdin.readlines()).strip()
 
     if (number and text):
         send_sms(number, text)

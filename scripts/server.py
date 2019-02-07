@@ -1,12 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import time
 import os
-from modem import Modem
+from lib.modem import Modem
 import sys
 import socket
 import json
 import threading
-import Queue
+import queue
 import syslog
 import getopt
 import signal
@@ -16,7 +16,7 @@ DEVICE = "/dev/ttyGSM"
 PACKET_SIZE = 4096
 MAX_CONNECTIONS = 5
 
-q = Queue.Queue()
+q = queue.Queue()
 
 def listener():
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -32,8 +32,8 @@ def listener():
         conn, addr = sock.accept()
         data = conn.recv(PACKET_SIZE)
         if data:
-            q.put(json.loads(data))
-            conn.sendall("OK")
+            q.put(json.loads(data.decode('utf-8')))
+            conn.sendall(b"OK")
             conn.close()
 
         time.sleep(1)
@@ -74,9 +74,14 @@ def main():
                 modem.sendSMS(message['number'], message['text'])
             except:
                 pass
+
+            print("check messages")
             modem.checkMessages()
 
         except Exception as e:
+            a,b,c = sys.exc_info()
+            print(vars(c))
+
             syslog.syslog(syslog.LOG_ERR, "SMSD server: got error, %s" % e)
             time.sleep(5)
             if (modem):

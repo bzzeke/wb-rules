@@ -1,3 +1,5 @@
 .env
 scripts/keys/*
 scripts/log/*
+*.pyc
+*.log

@@ -14,11 +14,10 @@ class Processor():
 
     def reboot(self):
         try:
-            output = subprocess.check_output('ssh -i %s %s "/system reboot"' % (os.environ['MIKROTIK_KEY'], os.environ['MIKROTIK_URL']), stderr=subprocess.STDOUT, shell=True)
+            output = subprocess.check_output('ssh -i {} {} "/system reboot"'.format(os.environ['MIKROTIK_KEY'], os.environ['MIKROTIK_URL']), stderr=subprocess.STDOUT, shell=True)
+            text = "Rebooted successfuly [{}]".format(output.decode())
         except subprocess.CalledProcessError as exc:
-            text = 'Failed to reboot [%s %s]' % (output.decode(), exc.output.decode())
-        else:
-            text = 'Rebooted successfuly [%s]' % (output.decode())
+            text = "Failed to reboot [{}]".format(exc.output.decode())
 
         self.__log(text)
         self.__log("Sent" if self.__send(text) else "Failed")
@@ -30,22 +29,22 @@ class Processor():
 
     def reboot_switch(self):
         try:
-            output = subprocess.check_output('%s/unify.py reboot' % (os.path.dirname(os.path.realpath(__file__))), stderr=subprocess.STDOUT, shell=True)
+            output = subprocess.check_output("{}/unify.py reboot".format(lib.util.getRoot()), stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as exc:
-            text = 'Failed to reboot switch [%s]' % (exc.output.decode())
+            text = "Failed to reboot switch [{}]".format(exc.output.decode())
         else:
-            text = 'Switch rebooted successfuly [%s]' % (output.decode())
+            text = "Switch rebooted successfuly [{}]".format(output.decode())
 
         self.__log(text)
         self.__log("Sent" if self.__send(text) else "Failed")
 
     def switch_ports(self):
         try:
-            output = subprocess.check_output('%s/unify.py switch_ports' % (os.path.dirname(os.path.realpath(__file__))), stderr=subprocess.STDOUT, shell=True)
+            output = subprocess.check_output("{}/unify.py switch_ports".format(lib.util.getRoot()), stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as exc:
-            text = 'Failed to switch ports [%s]' % (exc.output.decode())
+            text = "Failed to switch ports [{}]".format(exc.output.decode())
         else:
-            text = 'Ports switched successfuly [%s]' % (output.decode())
+            text = "Ports switched successfuly [{}]".format(output.decode())
 
         self.__log(text)
         self.__log("Sent" if self.__send(text) else "Failed")

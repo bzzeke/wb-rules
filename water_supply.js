@@ -1,10 +1,10 @@
 var heaterInit = false;
 var heaterStatusChanged = false;
 var waterSupply = {
-    'heaterStatus': 'wb-gpio/MOD2_IN3',
-    'heaterRelay': 'wb-gpio/EXT1_ON1',
+    'heaterStatus': 'leak_sensor/S1',
+    'heaterRelay': 'leak_sensor/K1',
     'pressure': 'wb-adc/A3',
-    'leak': 'wb-adc/A4'
+    'leak': 'leak_sensor/F2'
 };
 
 defineAlias('waterHeaterStatus', waterSupply.heaterStatus);
@@ -47,11 +47,7 @@ defineRule('ws.leak', {
         waterSupply.leak,
     ],
     then: function (newValue, devName, cellName) {
-        var threshold = 8;
-        var leak_status = newValue >= threshold;
-        if (leak_status != dev.water_supply['Leak']) {
-            dev.water_supply['Leak'] = leak_status;
-        }
+        dev.water_supply['Leak'] = newValue;
     }
 });
 

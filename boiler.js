@@ -1,29 +1,28 @@
 var relays = {
-    'pump1': 'wb-mr14_32/K2',
-    'pump2': 'wb-mr14_32/K1',
-    'pumpBasement': 'wb-mr14_32/K3',
-    'pumpBoiler': 'wb-mr14_32/K4',
-    'boiler': 'wb-gpio/MOD1_OUT1',
+    'pump1': 'relays/K1',
+    'pump2': 'relays/K2',
+    'pumpBasement': 'relays/K3',
+    'boiler': 'relays/K8',
 }
 
 var sensors = {
-    'floor1': 'wb-w1/28-0014175e3eff',
-    'floor2': 'wb-w1/28-00141743b2ff',
-    'basement': 'wb-w1/28-00141737fdff',
+    'floor1': 'sensor_1/Temperature',
+    'floor2': 'sensor_2/Temperature',
+    'basement': 'sensor_0/Temperature',
+    'boiler': 'boiler/Current Temperature',
     'garret': 'wb-w1/28-001416f342ff',
     'outside': 'wb-w1/28-001417357bff',
-    'boiler': 'wb-w1/28-001416e9e7ff',
     'bathhouse': 'wb-w1/28-0014175dd1ff',
     'pressure': 'wb-adc/A2'
 };
 
 var devicesByTemperature = {
     'Floor 1 Temperature': {
-        relay: 'K2',
+        relay: 'K1',
         thermo: 'Floor_1'
     },
     'Floor 2 Temperature': {
-        relay: 'K1',
+        relay: 'K2',
         thermo: 'Floor_2'
     },
     'Basement Temperature': {
@@ -35,7 +34,6 @@ var devicesByTemperature = {
 defineAlias('pump1', relays.pump1);
 defineAlias('pump2', relays.pump2);
 defineAlias('pumpBasement', relays.pumpBasement);
-defineAlias('pumpBoiler', relays.pumpBoiler);
 defineAlias('boiler', relays.boiler);
 
 var heater_counter = 0;
@@ -230,6 +228,7 @@ defineRule('th.checkPressure', {
         /*if (!dev['thermostat']['Enabled']) {
             return;
         }*/           
+      return;
         var lowThreshould = 0.2;
         if (newValue < lowThreshould) {
             dev['thermostat']['Enabled'] = 0;
@@ -237,16 +236,6 @@ defineRule('th.checkPressure', {
         }
     }
 });
-
-defineRule('th.checkBoilerPump', {
-    when: function() {
-        return boiler == 1 && pumpBoiler == 0;
-    },
-    then: function (newValue, devName, cellName) {
-        pumpBoiler = 1;
-    }
-});
-
 
 defineRule('th.checkBoilerTemperature', {
     whenChanged: [
@@ -260,7 +249,6 @@ defineRule('th.checkBoilerTemperature', {
             pump1 = 0;
             pump2 = 0;      
             pumpBasement = 0;      
-            pumpBoiler = 0;
         }
     }
 });
@@ -273,7 +261,6 @@ defineRule("th.shutdownBoiler", {
             pump1 = 0;
             pump2 = 0;
             pumpBasement = 0;
-            pumpBoiler = 0;
         }
     }
 });
@@ -290,8 +277,7 @@ defineRule('th.checkPeriodical', {
             switchBoiler(false);
             pump1 = 0;
             pump2 = 0;
-            pumpBasement = 0;
-            pumpBoiler = 0;     
+            pumpBasement = 0;  
     }
     }
 });
@@ -351,7 +337,6 @@ function switchBoiler(enable)
 {
     if (enable && boiler == 0) {
         boiler = 1;
-        pumpBoiler = 1;
     } else if (!enable && boiler == 1) {
         boiler = 0;
     }
@@ -397,4 +382,3 @@ function managePumpSimple()
         switchBoiler(false);
     }  
 }
-

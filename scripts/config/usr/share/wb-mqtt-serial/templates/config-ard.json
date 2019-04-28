@@ -1,0 +1,65 @@
+{
+    "device_type": "ARD",
+    "device": {
+        "name": "ARD",
+        "id": "ard",
+        "enabled": true,
+        "max_read_registers": 0,
+        "channels": [
+            {
+                "name": "Current Temperature",
+                "reg_type": "holding",
+                "address": 0,
+                "type": "temperature"
+            },
+            {
+                "name": "Temperature",
+                "reg_type": "holding",
+                "address": 1,
+                "type": "temperature"
+            },
+            {
+                "name": "Coil 1",
+                "reg_type": "holding",
+                "address": 2,
+                "type": "switch",
+                "readonly": true
+            },
+            {
+                "name": "Coil 2",
+                "reg_type": "holding",
+                "address": 3,
+                "type": "switch",
+                "readonly": true
+            },
+            {
+                "name": "Coil 3",
+                "reg_type": "holding",
+                "address": 4,
+                "type": "switch",
+                "readonly": true
+            },            
+            {
+                "name": "Pump",
+                "reg_type": "holding",
+                "address": 5,
+                "type": "switch",
+                "readonly": true
+            },            
+            {
+                "name": "Remote",
+                "reg_type": "holding",
+                "address": 6,
+                "type": "switch",
+                "readonly": true
+            },            
+            {
+                "name": "Temp OK",
+                "reg_type": "holding",
+                "address": 7,
+                "type": "switch",
+                "readonly": true
+            }
+        ]
+    }
+}

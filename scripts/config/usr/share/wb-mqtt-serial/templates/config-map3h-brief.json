@@ -1,0 +1,149 @@
+{
+    "device_type": "WB-MAP3H_brief",
+    "device": {
+        "name": "WB-MAP3H_brief",
+        "id": "wb-map3h",
+        "max_read_registers": 60,
+        "channels": [
+            {
+                "name": "Urms L1",
+                "reg_type": "input",
+                "address": "0x10d9",
+                "type": "voltage",
+                "format": "u16",
+                "scale": 0.01,
+                "round_to": 0.01
+            },
+            {
+                "name": "Urms L2",
+                "reg_type": "input",
+                "address": "0x10da",
+                "type": "voltage",
+                "format": "u16",
+                "scale": 0.01,
+                "round_to": 0.01
+            },
+            {
+                "name": "Urms L3",
+                "reg_type": "input",
+                "address": "0x10db",
+                "type": "voltage",
+                "format": "u16",
+                "scale": 0.01,
+                "round_to": 0.01
+            },
+            {
+                "name": "Frequency",
+                "reg_type": "input",
+                "address": "0x10f8",
+                "type": "value",
+                "format": "u16",
+                "scale": 0.01,
+                "round_to": 0.01
+            },
+            {
+                "name": "Irms L1",
+                "reg_type": "input",
+                "address": "0x10dd",
+                "type": "value",
+                "format": "u16",
+                "scale": 0.001,
+                "round_to": 0.01
+            },
+            {
+                "name": "P L1",
+                "reg_type": "input",
+                "address": "0x1302",
+                "type": "power",
+                "format": "s32",
+                "scale": 0.0000152588,
+                "round_to": 0.01
+            },
+            {
+                "name": "AP energy L1",
+                "reg_type": "input",
+                "address": "0x1204",
+                "type": "power_consumption",
+                "format": "u64",
+                "scale": 0.00003125,
+                "round_to": 0.0001,
+                "word_order": "little_endian"
+            },
+            {
+                "name": "Irms L2",
+                "reg_type": "input",
+                "address": "0x10de",
+                "type": "value",
+                "format": "u16",
+                "scale": 0.001,
+                "round_to": 0.01
+            },
+            {
+                "name": "P L2",
+                "reg_type": "input",
+                "address": "0x1304",
+                "type": "power",
+                "format": "s32",
+                "scale": 0.0000152588,
+                "round_to": 0.01
+            },
+            {
+                "name": "AP energy L2",
+                "reg_type": "input",
+                "address": "0x1208",
+                "type": "power_consumption",
+                "format": "u64",
+                "scale": 0.00003125,
+                "round_to": 0.0001,
+                "word_order": "little_endian"
+            },
+            {
+                "name": "Irms L3",
+                "reg_type": "input",
+                "address": "0x10df",
+                "type": "value",
+                "format": "u16",
+                "scale": 0.001,
+                "round_to": 0.01
+            },
+            {
+                "name": "P L3",
+                "reg_type": "input",
+                "address": "0x1306",
+                "type": "power",
+                "format": "s32",
+                "scale": 0.0000152588,
+                "round_to": 0.01
+            },
+            {
+                "name": "AP energy L3",
+                "reg_type": "input",
+                "address": "0x120c",
+                "type": "power_consumption",
+                "format": "u64",
+                "scale": 0.00003125,
+                "round_to": 0.0001,
+                "word_order": "little_endian"
+            },
+            {
+                "name": "Total P",
+                "reg_type": "input",
+                "address": "0x1300",
+                "type": "power",
+                "format": "s32",
+                "scale": 0.0000610352,
+                "round_to": 0.01
+            },
+            {
+                "name": "Total AP energy",
+                "reg_type": "input",
+                "address": "0x1200",
+                "type": "power_consumption",
+                "format": "u64",
+                "scale": 0.00003125,
+                "round_to": 0.0001,
+                "word_order": "little_endian"
+            }
+        ]
+    }
+}

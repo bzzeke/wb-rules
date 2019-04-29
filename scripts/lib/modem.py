@@ -67,7 +67,8 @@ class Modem():
             return False
 
         m = re.search('"(.*?)"', response)
-        self.smsc = codecs.decode(m.group(1), 'hex').decode()
+        self.smsc = m.group(1)
+#        self.smsc = codecs.decode(m.group(1), 'hex').decode()
 
         return True
 

@@ -347,9 +347,9 @@ function pumpValueByTemp(cellName, value)
     var relay = devicesByTemperature[cellName]['relay'];
 
     if (value === undefined) {
-        return dev['wb-mr14_32'][relay];
+        return dev['relays'][relay];
     } else {
-        dev['wb-mr14_32'][relay] = value;
+        dev['relays'][relay] = value;
     }
 }
 

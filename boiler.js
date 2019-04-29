@@ -13,7 +13,7 @@ var sensors = {
     'garret': 'wb-w1/28-001416f342ff',
     'outside': 'wb-w1/28-001417357bff',
     'bathhouse': 'wb-w1/28-0014175dd1ff',
-    'pressure': 'wb-adc/A2'
+    'pressure': 'wb-adc/A1'
 };
 
 var devicesByTemperature = {

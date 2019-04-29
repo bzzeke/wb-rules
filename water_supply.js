@@ -3,7 +3,7 @@ var heaterStatusChanged = false;
 var waterSupply = {
     'heaterStatus': 'leak_sensor/S1',
     'heaterRelay': 'leak_sensor/K1',
-    'pressure': 'wb-adc/A3',
+    'pressure': 'wb-adc/A2',
     'leak': 'leak_sensor/F2'
 };
 

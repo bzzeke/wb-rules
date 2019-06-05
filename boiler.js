@@ -39,7 +39,7 @@ defineAlias('boiler', relays.boiler);
 var heater_counter = 0;
 var start_date = 0;
 
-var TOUT_THRESHOULD = 30;
+var TOUT_THRESHOULD = 35;
 var TEMP_THRESHOULD = 24;
 var HYSTERESIS_UP = 0;
 var HYSTERESIS_DOWN = 0.1;

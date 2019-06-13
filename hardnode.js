@@ -2,7 +2,7 @@ defineVirtualDevice('hardnode', {
     title: 'Hardnode',
     cells: {
         'CPU temperature' : {
-            type : 'text',
+            type : 'temperature',
           	value: ''
         },
         'Fan1 speed' : {

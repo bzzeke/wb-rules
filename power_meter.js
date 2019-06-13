@@ -7,11 +7,11 @@ defineVirtualDevice('power_meter', {
     title: 'Power meter',
     cells: {
         'Total power day' : {
-            type : 'text',
+            type : 'power_consumption',
             value : initialValueDay
         },
         'Total power night' : {
-            type : 'text',
+            type : 'power_consumption',
             value : initialValueNight
         }
     }

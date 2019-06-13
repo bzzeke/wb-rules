@@ -6,7 +6,7 @@ defineVirtualDevice('ups', {
           	value: ''
         },
         'Input voltage' : {
-            type : 'text',
+            type : 'voltage',
           	value: ''
         },
         'Load' : {

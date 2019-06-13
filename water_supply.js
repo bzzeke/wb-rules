@@ -3,8 +3,7 @@ var heaterStatusChanged = false;
 var waterSupply = {
     'heaterStatus': 'leak_sensor/S1',
     'heaterRelay': 'leak_sensor/K1',
-    'pressure': 'wb-adc/A2',
-    'leak': 'leak_sensor/F2'
+    'pressure': 'wb-adc/A2'
 };
 
 defineAlias('waterHeaterStatus', waterSupply.heaterStatus);
@@ -21,12 +20,7 @@ defineVirtualDevice('water_supply', {
         'Pressure' : {
             type : 'text',
             value : ''
-        },
-        'Leak' : {
-            type : 'switch',
-            value : 0,
-            readonly: true
-        }      
+        }
     }
 });
 
@@ -39,15 +33,6 @@ defineRule('ws.pressure', {
         if (pressure != dev.water_supply['Pressure']) {
             dev.water_supply['Pressure'] = pressure;
         }
-    }
-});
-
-defineRule('ws.leak', {
-    whenChanged: [
-        waterSupply.leak,
-    ],
-    then: function (newValue, devName, cellName) {
-        dev.water_supply['Leak'] = newValue;
     }
 });
 

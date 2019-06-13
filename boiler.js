@@ -10,25 +10,22 @@ var sensors = {
     'floor2': 'sensor_2/Temperature',
     'basement': 'sensor_0/Temperature',
     'boiler': 'boiler/Current Temperature',
-    'garret': 'wb-w1/28-001416f342ff',
-    'outside': 'wb-w1/28-001417357bff',
-    'bathhouse': 'wb-w1/28-0014175dd1ff',
     'pressure': 'wb-adc/A1'
 };
 
-var devicesByTemperature = {
-    'Floor 1 Temperature': {
-        relay: 'K1',
-        thermo: 'Floor_1'
-    },
-    'Floor 2 Temperature': {
-        relay: 'K2',
-        thermo: 'Floor_2'
-    },
-    'Basement Temperature': {
-        relay: 'K3',
-        thermo: 'Basement'
-    }
+var devicesByTemperature = {};
+
+devicesByTemperature[sensors.floor1] = {
+    relay: 'K1',
+    thermo: 'Floor_1'
+};
+devicesByTemperature[sensors.floor2] = {
+    relay: 'K2',
+    thermo: 'Floor_2'
+};
+devicesByTemperature[sensors.basement] = {
+    relay: 'K3',
+    thermo: 'Basement'
 };
 
 defineAlias('pump1', relays.pump1);
@@ -43,6 +40,7 @@ var TOUT_THRESHOULD = 35;
 var TEMP_THRESHOULD = 24;
 var HYSTERESIS_UP = 0;
 var HYSTERESIS_DOWN = 0.1;
+var PRESSURE_LOW_THRESHOULD = 0.2;
 
 
 defineVirtualDevice('thermostat', {
@@ -53,44 +51,16 @@ defineVirtualDevice('thermostat', {
             value : 24,
             max : 30
         },
-        'Floor 1 Temperature': {
-            type: 'temperature',
-            value: ''
-        },
         'Floor_2' : {
             type : 'range',
             value : 23,
             max : 30,
-        },
-        'Floor 2 Temperature': {
-            type: 'temperature',
-            value: ''
         },
         'Basement' : {
             type : 'range',
             value : 24,
             max : 30,
         },
-        'Basement Temperature': {
-            type: 'temperature',
-            value: ''
-        },
-        'Garret Temperature': {
-            type: 'temperature',
-            value: ''
-        },
-        'Outside Temperature': {
-            type: 'temperature',
-            value: ''
-        },
-        'Boiler Out Temperature': {
-            type: 'temperature',
-            value: ''
-        },
-        'Bath House Temperature': {
-            type: 'temperature',
-            value: ''
-        },      
         'Pressure': {
             type: 'text',
             value: ''
@@ -140,19 +110,20 @@ defineRule("th.counterSummary", {
 
 defineRule('th.switchPumpsByTemperature', {
     whenChanged: [
-        'thermostat/Floor 1 Temperature', 
-        'thermostat/Floor 2 Temperature', 
-        'thermostat/Basement Temperature'
+        sensors.floor1, 
+        sensors.floor2, 
+        sensors.basement
     ],
     then: function (newValue, devName, cellName) {
         if (!dev['thermostat']['Enabled']) {
             return;
         }
         if (dev['thermostat']['Simple']) {
-            managePumpSimple();
+            managePumpSimple(sensors.floor1);
         } else {
-            var thermo = dev['thermostat'][devicesByTemperature[cellName]['thermo']]; // production
-            managePumps(newValue, thermo, cellName);        
+            var tempDev = devName + '/' + cellName;
+            var thermo = dev['thermostat'][devicesByTemperature[tempDev]['thermo']]; // production
+            managePumps(newValue, thermo, tempDev);
         }
     }
 });
@@ -168,45 +139,23 @@ defineRule('th.switchPumpsByThermostat', {
             return;
         }
         var map = {
-            'Floor_1': 'Floor 1 Temperature',
-            'Floor_2': 'Floor 2 Temperature',
-            'Basement': 'Basement Temperature'
+            'Floor_1': sensors.floor1,
+            'Floor_2': sensors.floor2,
+            'Basement': sensors.basement
         };
 
         if (dev['thermostat']['Simple']) {        
             if (cellName == 'Floor_1') {
-                managePumpSimple();
+                managePumpSimple(sensors.floor1);
             }            
         } else {
-            var temp = dev['thermostat'][map[cellName]];
+            var device = splitDevice(map[cellName]);
+            var temp = dev[device['device']][device['cell']];
             managePumps(temp, newValue, map[cellName]);
         }
     }
 });
 
-defineRule('th.displayTemperature', {
-    whenChanged: [
-      sensors.floor1,
-      sensors.floor2,
-      sensors.basement,
-      sensors.boiler,
-      sensors.garret,
-      sensors.outside,
-      sensors.bathhouse
-    ],
-    then: function (newValue, devName, cellName) {
-        var map = {}
-        map[sensors.floor1] = 'Floor 1 Temperature';
-        map[sensors.floor2] = 'Floor 2 Temperature';
-        map[sensors.basement] = 'Basement Temperature';
-        map[sensors.garret] = 'Garret Temperature';
-        map[sensors.outside] = 'Outside Temperature';
-        map[sensors.boiler] = 'Boiler Out Temperature';
-        map[sensors.bathhouse] = 'Bath House Temperature';
-        
-        dev.thermostat[map[devName + '/' + cellName]] = newValue;
-    }
-});
 
 defineRule('th.displayPressure', {
     whenChanged: [sensors.pressure],
@@ -228,9 +177,8 @@ defineRule('th.checkPressure', {
         /*if (!dev['thermostat']['Enabled']) {
             return;
         }*/           
-      return;
-        var lowThreshould = 0.2;
-        if (newValue < lowThreshould) {
+        return;
+        if (newValue < PRESSURE_LOW_THRESHOULD) {
             dev['thermostat']['Enabled'] = 0;
             dev['thermostat']['Periodical'] = 0;
         }
@@ -239,7 +187,7 @@ defineRule('th.checkPressure', {
 
 defineRule('th.checkBoilerTemperature', {
     whenChanged: [
-        'thermostat/Boiler Out Temperature'
+        sensors.boiler
     ],
     then: function (newValue, devName, cellName) {
         /*if (!dev['thermostat']['Enabled']) {
@@ -293,9 +241,9 @@ defineRule("th.enablePeriodical", {
         }
     ,
     then: function () {
-        pumpValueByTemp('Floor 1 Temperature', 1);
-        pumpValueByTemp('Floor 2 Temperature', 1);
-        pumpValueByTemp('Basement Temperature', 1);
+        pumpValueByTemp(sensors.floor1, 1);
+        pumpValueByTemp(sensors.floor2, 1);
+        pumpValueByTemp(sensors.basement, 1);
         switchBoiler(true);
     }
 });
@@ -342,9 +290,9 @@ function switchBoiler(enable)
     }
 }
 
-function pumpValueByTemp(cellName, value)
+function pumpValueByTemp(tempDev, value)
 {
-    var relay = devicesByTemperature[cellName]['relay'];
+    var relay = devicesByTemperature[tempDev]['relay'];
 
     if (value === undefined) {
         return dev['relays'][relay];
@@ -353,32 +301,41 @@ function pumpValueByTemp(cellName, value)
     }
 }
 
-function managePumps(temp, thermo, tempCell)
+function managePumps(temp, thermo, tempDev)
 {    
     if (temp < thermo - HYSTERESIS_DOWN) {
-        pumpValueByTemp(tempCell, 1);
+        pumpValueByTemp(tempDev, 1);
         switchBoiler(true);
-    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(tempCell) == 1) {
+    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(tempDev) == 1) {
         if (pumpsEnabled() == 1) {
             switchBoiler(false);
         } else {
-            pumpValueByTemp(tempCell, 0);
+            pumpValueByTemp(tempDev, 0);
         }
     }
 }
 
-function managePumpSimple()
+function managePumpSimple(sensor)
 {
-    var tempCell = 'Floor 1 Temperature';
-    var temp = dev['thermostat'][tempCell];
-    var thermo = dev['thermostat']['Floor_1'];
+    var device = splitDevice(sensors);
+    var temp = dev[device['device']][device['cell']];
+    var thermo = dev['thermostat'][devicesByTemperature[sensor]['thermo']];
     
-    if (temp < thermo - HYSTERESIS_DOWN && pumpValueByTemp(tempCell) == 0) {
-        pumpValueByTemp(tempCell, 1);
-        pumpValueByTemp('Floor 2 Temperature', 1);
-        pumpValueByTemp('Basement Temperature', 1);
+    if (temp < thermo - HYSTERESIS_DOWN && pumpValueByTemp(sensor) == 0) {
+        pumpValueByTemp(sensors.floor1, 1);
+        pumpValueByTemp(sensors.floor2, 1);
+        pumpValueByTemp(sensors.basement, 1);
         switchBoiler(true);
-    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(tempCell) == 1) {
+    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(sensors) == 1) {
         switchBoiler(false);
     }  
+}
+
+function splitDevice(device)
+{
+    var elements = device.split('/');
+    return {
+        'device': elements[0],
+        'cell': elements[1]
+    }
 }

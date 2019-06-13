@@ -1,4 +1,4 @@
-var cryNotificationTS = 0;
+var cryDuration = 0;
 
 defineVirtualDevice('util', {
     title: 'Util', //
@@ -27,13 +27,6 @@ defineVirtualDevice('util', {
             type: 'text',
             value: ''
         }
-    }
-});
-
-defineRule("_synology_home_mode", {
-    whenChanged: "util/Occupancy",
-    then: function (newValue, devName, cellName) {
-        runShellCommand("/etc/wb-rules/scripts/homemode.py " + ((newValue == 1) ? 'on' : 'off'));
     }
 });
 
@@ -75,7 +68,7 @@ defineRule("_cry_alarm", {
     whenChanged: ["sensor_2/Sound Level"],
     then: function(newValue, devName, cellName) {
         var threshould = 40;
-        var interval = 10; // 10 seconds
+        var interval = 3; // 3 seconds
         var email = 'notify@delyanka.io';
         var d = new Date();
         var ts = Math.floor(d.getTime() / 1000);
@@ -84,9 +77,16 @@ defineRule("_cry_alarm", {
             return;
         }
 
-        if (ts - cryNotificationTS > interval && newValue > threshould) {
-            Notify.sendEmail(email, 'Home', 'Looks like someone is crying, level - ' + newValue);
-            cryNotificationTS = ts;
+        if (newValue < threshould) {
+            cryDuration = 0;
+        } else {
+            if (cryDuration > 0) {
+                if (ts - cryDuration > interval) {
+                    Notify.sendEmail(email, 'Home', 'Looks like someone is crying, level - ' + newValue);
+                }
+            } else {
+                cryDuration = ts;
+            }
         }
     }
 });

@@ -23,9 +23,9 @@ defineRule('pm.power', {
       
         var d = new Date();
         if (d.getHours() >= dayStart && d.getHours() <= dayEnd) {
-            dev['power_meter']['Total power day'] = initialValueDay + newValue - dev['power_meter']['Total power night'] + initialValueNight;
+            dev['power_meter']['Total power day'] = (initialValueDay + newValue - dev['power_meter']['Total power night'] + initialValueNight).toFixed(4);
         } else {
-            dev['power_meter']['Total power night'] = initialValueNight + newValue - dev['power_meter']['Total power day'] + initialValueDay;
+            dev['power_meter']['Total power night'] = (initialValueNight + newValue - dev['power_meter']['Total power day'] + initialValueDay).toFixed(4);
         }
     }
 });

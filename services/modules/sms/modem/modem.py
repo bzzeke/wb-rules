@@ -4,8 +4,8 @@ import datetime
 import syslog
 import os
 from curses import ascii
-from lib.pdu import decodeSmsPdu, encodeSmsSubmitPdu
-from lib.processor import Processor
+from .pdu import decodeSmsPdu, encodeSmsSubmitPdu
+from .processor import Processor
 import re
 import codecs
 
@@ -78,7 +78,6 @@ class Modem():
 
         while True:
             status = self.read()
-            print(status)
             if (status.startswith(string)):
                 break
 

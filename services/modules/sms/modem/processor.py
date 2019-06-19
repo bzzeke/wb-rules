@@ -1,8 +1,10 @@
 import subprocess
 import json
 import os
-import lib.util
-from client import send_sms
+import util
+import contextlib
+import io
+import modules.unify.unify as unify
 
 class Processor():
     def __log(self, text):
@@ -10,7 +12,7 @@ class Processor():
             file.write(text + '\n')
 
     def __send(self, text):
-        return send_sms(os.environ['PHONE'], text)
+        return util.send_sms(os.environ['PHONE'], text)
 
     def reboot(self):
         try:
@@ -28,23 +30,32 @@ class Processor():
         self.__log("Sent" if self.__send(text) else "Failed")
 
     def reboot_switch(self):
-        try:
-            output = subprocess.check_output("{}/unify.py reboot".format(lib.util.getRoot()), stderr=subprocess.STDOUT, shell=True)
-        except subprocess.CalledProcessError as exc:
-            text = "Failed to reboot switch [{}]".format(exc.output.decode())
+
+        result = False
+        f = io.StringIO()
+        with contextlib.redirect_stdout(f):
+            result = unify.reboot()
+
+        if (result):
+            text = "Switch rebooted successfuly [{}]".format(f.getvalue())
         else:
-            text = "Switch rebooted successfuly [{}]".format(output.decode())
+            text = "Failed to reboot switch [{}]".format(f.getvalue())
 
         self.__log(text)
         self.__log("Sent" if self.__send(text) else "Failed")
 
     def switch_ports(self):
-        try:
-            output = subprocess.check_output("{}/unify.py switch_ports".format(lib.util.getRoot()), stderr=subprocess.STDOUT, shell=True)
-        except subprocess.CalledProcessError as exc:
-            text = "Failed to switch ports [{}]".format(exc.output.decode())
+
+        result = False
+        f = io.StringIO()
+        with contextlib.redirect_stdout(f):
+            result = unify.switch_ports()
+
+        if (result):
+            text = "Ports switched successfuly [{}]".format(f.getvalue())
         else:
-            text = "Ports switched successfuly [{}]".format(output.decode())
+            text = "Failed to switch ports [{}]".format(f.getvalue())
+
 
         self.__log(text)
         self.__log("Sent" if self.__send(text) else "Failed")

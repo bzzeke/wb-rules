@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+
+import os
+import util
+import getopt
+import sys
+import importlib
+
+available_modules = {
+    "dash_parser": True,
+    "monitoring": True,
+    "sensors": True,
+    "sms_server": "sms",
+    "sms_client": "sms",
+    "unify": True,
+    "ups": True
+}
+
+if len(sys.argv) > 1 and sys.argv[1] in available_modules:
+    util.import_env()
+
+    if available_modules[sys.argv[1]] != True:
+        module = available_modules[sys.argv[1]]
+    else:
+        module = sys.argv[1]
+
+    module = importlib.import_module("modules.%s.%s" % (module, sys.argv[1]))
+    module.main()
+else:
+    print("Usage: dio cmd [flags]")

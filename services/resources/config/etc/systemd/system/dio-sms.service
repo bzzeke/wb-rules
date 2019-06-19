@@ -1,0 +1,12 @@
+[Unit]
+Description=DIO:SMS service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/wb-rules/services
+ExecStart=/etc/wb-rules/services/resources/scripts/sms_server.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

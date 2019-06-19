@@ -3,7 +3,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
-import lib.util
 
 class Server(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -14,13 +13,6 @@ class Server(BaseHTTPRequestHandler):
     def do_GET(self):
         self._set_headers()
         self.wfile.write(json.dumps(getwidgets()).encode("utf-8"))
-
-def run(server_class=HTTPServer, handler_class=Server, port=80):
-    server_address = ('', int(port))
-    httpd = server_class(server_address, handler_class)
-    print('Starting httpd...')
-    httpd.serve_forever()
-
 
 def cell_get_type(cell):
     if cell["type"] in ["temperature", "text", "rel_humidity", "concentration", "voltage", "value", "power", "power_consumption"]:
@@ -123,5 +115,10 @@ def getwidgets():
 
     return widgets
 
-if __name__ == "__main__":
-    run(port=os.environ["DASH_PORT"])
+def main():
+    server_address = ('', int(os.environ["DASH_PORT"]))
+    httpd = HTTPServer(server_address, Server)
+    print('Dash parser, starting...')
+    httpd.serve_forever()
+
+

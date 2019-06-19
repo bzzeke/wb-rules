@@ -1,0 +1,12 @@
+[Unit]
+Description=DIO:Hosts and devices monitoring daemon
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/wb-rules/services
+ExecStart=/etc/wb-rules/services/dio monitoring
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

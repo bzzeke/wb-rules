@@ -1,0 +1,12 @@
+[Unit]
+Description=DIO:Dash config converter service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/wb-rules/services
+ExecStart=/etc/wb-rules/services/dio dash_parser
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,5 @@
 .env
-scripts/keys/*
-scripts/log/*
+services/resources/keys/*
+services/log/*
 *.pyc
 *.log

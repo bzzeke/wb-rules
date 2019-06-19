@@ -1,0 +1,3 @@
+# m h dom mon dow user  command
+* * * * *   root    /etc/wb-rules/services/resources/scripts/wbrules_checker.sh >> /etc/wb-rules/services/log/wbrules_checker.log
+

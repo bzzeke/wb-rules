@@ -24,7 +24,7 @@ defineVirtualDevice('ups', {
 defineRule("ups.status", {
     when: cron("@every 10s"),
     then: function () {
-        runShellCommand("/etc/wb-rules/scripts/ups.py", {
+        runShellCommand("/etc/wb-rules/services/dio ups", {
             captureOutput: true,
             exitCallback: function (exitCode, capturedOutput) {
                 var data = JSON.parse(capturedOutput);

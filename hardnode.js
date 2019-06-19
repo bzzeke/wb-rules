@@ -19,7 +19,7 @@ defineVirtualDevice('hardnode', {
 defineRule("hardnode.status", {
     when: cron("@every 10s"),
     then: function () {
-        runShellCommand("/etc/wb-rules/scripts/sensors.py", {
+        runShellCommand("/etc/wb-rules/services/dio sensors", {
             captureOutput: true,
             exitCallback: function (exitCode, capturedOutput) {
                 var data = JSON.parse(capturedOutput);

@@ -1,4 +1,5 @@
-import os, sys, inspect, subprocess, socket, json, syslog
+import os, sys, inspect, subprocess, socket, json, syslog, smtplib
+from email.message import EmailMessage
 
 def get_root():
     for teil in inspect.stack():
@@ -20,17 +21,16 @@ def get_root():
 
 def send_email(text):
 
-    header = """To: %s
-    From: %s
-    Subject: Notify
-    """ % (os.environ['NOTIFY_EMAIL'], os.environ['FROM_EMAIL'])
+    msg = EmailMessage()
+    msg.set_content(text)
 
-    message = """%s
-    %s
-    """ % (header, text)
+    msg['Subject'] = 'Alert'
+    msg['From'] = os.environ['FROM_EMAIL']
+    msg['To'] = os.environ['NOTIFY_EMAIL']
 
-    res = subprocess.Popen(['ssmtp', os.environ['NOTIFY_EMAIL']], stdin=subprocess.PIPE)
-    res.communicate(input=str.encode(text))[0]
+    s = smtplib.SMTP(os.environ['MAIL_SERVER'])
+    s.send_message(msg)
+    s.quit()
 
 def send_sms(number, text):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

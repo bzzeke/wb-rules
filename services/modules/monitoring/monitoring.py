@@ -6,6 +6,7 @@ import time
 import mosquitto as mqtt
 import threading
 import sys
+import util
 
 client = mqtt.Mosquitto()
 
@@ -16,8 +17,10 @@ PUBLISH_TOPIC_DEVICES="/monitoring/devices/%s"
 class HostChecker:
     addresses = {}
     sleep = 20
+    last_state = {}
     def __init__(self, addresses):
         self.addresses = addresses.split(",")
+
         s = threading.Thread(target = self.loop)
         s.daemon = True
         s.start()
@@ -40,11 +43,25 @@ class HostChecker:
         ms = 1000*(end-start)
         return result, round(ms,2)
 
+    def notify(self, address, result):
+
+        if result:
+            message = "Host is online: %s" % (address)
+        else:
+            message = "Host is down: %s" % (address)
+
+        util.send_email(message)
+
     def loop(self):
         while True:
             for address in self.addresses:
                 host, port = address.split(":")
                 result, t = self.tcp(host, port)
+
+                if address in self.last_state and self.last_state[address] != result:
+                    self.notify(address, result)
+
+                self.last_state[address] = result
                 publish(PUBLISH_TOPIC_HOSTS % address, result)
 
             time.sleep(self.sleep)
@@ -52,9 +69,13 @@ class HostChecker:
 class DeviceChecker:
     state = {}
     devices = {}
-    sleep = 9
+    sleep = 20
+    tdiff = 20
+    last_state = {}
+
     def __init__(self, devices):
         self.set_devices(devices)
+
         s = threading.Thread(target = self.loop)
         s.daemon = True
         s.start()
@@ -82,6 +103,15 @@ class DeviceChecker:
             elif device in self.state:
                 del self.state[device]
 
+    def notify(self, device, result):
+
+        if result:
+            message = "Device is online: %s" % (device)
+        else:
+            message = "Device is down: %s" % (device)
+
+        util.send_email(message)
+
     def loop(self):
         while True:
             devs = {}
@@ -89,16 +119,21 @@ class DeviceChecker:
                 devs[key] = True
 
             ctime = time.time()
-            tdiff = 10
+
             for key, value in self.state.items():
-                if ctime - value > tdiff:
+                if ctime - value > self.tdiff:
                     devs[key] = False
 
             for key, value in devs.items():
+
+                if key in self.last_state and self.last_state[key] != value:
+                    self.notify(key, value)
+
+                self.last_state[key] = value
+
                 publish(PUBLISH_TOPIC_DEVICES % key, value)
 
             time.sleep(self.sleep)
-
 
 def publish(topic, result):
     client.publish(topic, 1 if result else 0, 0, True)

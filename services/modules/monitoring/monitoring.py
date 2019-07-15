@@ -94,7 +94,7 @@ class DeviceChecker:
 
     def on_message(self, client, userdata, msg):
 
-        parts = msg.topic.split('/')
+        parts = msg.topic.split("/")
         device = parts[2]
         control = parts[4]
 
@@ -148,8 +148,8 @@ def main():
         client.on_connect = dc.on_connect
         client.on_message = dc.on_message
 
-        client.connect(os.environ['MQTT_HOST'], int(os.environ['MQTT_PORT']), 10)
-        print("Monitoring daemon, starting...")
+        client.connect(os.environ["MQTT_HOST"], int(os.environ["MQTT_PORT"]), 10)
+        util.prnt("[monitoring] Starting...")
         while True:
             rc = client.loop()
             if rc != 0:

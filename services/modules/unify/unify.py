@@ -6,6 +6,7 @@ import ssl
 import time
 import getopt
 import sys
+import util
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -27,10 +28,10 @@ def req(method, endpoint, data, headers = {}):
                                 headers=headers, method=method)
     try: response = urllib.request.urlopen(req)
     except urllib.error.HTTPError as e:
-        print(str(e))
+        util.prnt("[unify] %s" % str(e), util.LOG_ERR)
         response = e
     except urllib.error.URLError as e:
-        print(str(e))
+        util.prnt("[unify] %s" % str(e), util.LOG_ERR)
         response = e
 
     return response
@@ -52,16 +53,16 @@ def switch_ports():
                     interface["port"]["poe"] = original_status
                     resp = req("PUT", "api/v1.0/interfaces", interface, {"x-auth-token": token})
                     if resp.getcode() == 200:
-                        print("Switched POE for port %s successfully" % (interface["identification"]["id"]))
+                        util.prnt("[unify] Switched POE for port %s successfully" % (interface["identification"]["id"]))
                         return True
 
-                    print("Failed to get POE back for port %s" % (interface["identification"]["id"]))
+                    util.prnt("[unify] Failed to get POE back for port %s" % (interface["identification"]["id"]), util.LOG_ERR)
                     return False
                 else:
-                    print("Failed to switch POE off for port %s" % (interface["identification"]["id"]))
+                    util.prnt("[unify] Failed to switch POE off for port %s" % (interface["identification"]["id"]), util.LOG_ERR)
                     return False
     else:
-        print("Failed to get interfaces list")
+        util.prnt("[unify] Failed to get interfaces list", util.LOG_ERR)
 
     return False
 
@@ -70,10 +71,10 @@ def reboot():
 
     resp = req("GET", "api/v1.0/system/reboot", {}, {"x-auth-token": token})
     if resp.getcode() == 200:
-        print("Rebooted successfully")
+        util.prnt("[unify] Rebooted successfully")
         return True
 
-    print("Failed to reboot")
+    util.prnt("[unify] Failed to reboot", util.LOG_ERR)
     return False
 
 def parse_options():
@@ -101,9 +102,9 @@ def auth():
         if "x-auth-token" in headers:
             token = headers["x-auth-token"]
         else:
-            print("Failed to get auth token from headers")
+            util.prnt("[unify] Failed to get auth token from headers", util.LOG_ERR)
     else:
-        print("Failed to authenticate")
+        util.prnt("[unify] Failed to authenticate", util.LOG_ERR)
 
     return token
 

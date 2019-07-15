@@ -3,11 +3,12 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
+import util
 
 class Server(BaseHTTPRequestHandler):
     def _set_headers(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/json')
+        self.send_header("Content-type", "text/json")
         self.end_headers()
 
     def do_GET(self):
@@ -83,7 +84,7 @@ def cell_get_range_data(control, cell):
 def getwidgets():
 
     widgets = []
-    with open(os.environ["DASH_CONFIG"], 'r') as f:
+    with open(os.environ["DASH_CONFIG"], "r") as f:
         webui = json.load(f)
 
     if webui:
@@ -116,9 +117,9 @@ def getwidgets():
     return widgets
 
 def main():
-    server_address = ('', int(os.environ["DASH_PORT"]))
+    server_address = ("", int(os.environ["DASH_PORT"]))
     httpd = HTTPServer(server_address, Server)
-    print('Dash parser, starting...')
+    util.prnt("[dash_parser] Starting...")
     httpd.serve_forever()
 
 

@@ -7,9 +7,9 @@ import socket
 import json
 import threading
 import queue
-import syslog
 import getopt
 import signal
+import util
 
 PACKET_SIZE = 4096
 MAX_CONNECTIONS = 5
@@ -60,12 +60,12 @@ def main():
     t.start()
     modem = False
     device = parse_options()
-    print("SMS server, starting...")
+    util.prnt("[sms_server] Starting...")
     while True:
         try:
             if (not modem or not modem.isOpen()):
                 modem = Modem(device)
-                syslog.syslog("SMS server: started")
+                util.prnt("[sms_server] started")
             try:
                 message = q.get(False)
                 modem.sendSMS(message['number'], message['text'])
@@ -76,9 +76,9 @@ def main():
 
         except Exception as e:
             a,b,c = sys.exc_info()
-            print(vars(c))
+            util.prnt(vars(c), util.LOG_ERR)
 
-            syslog.syslog(syslog.LOG_ERR, "SMS server: got error, %s" % e)
+            util.prnt("[sms_server] got error, %s" % e, util.LOG_ERR)
             time.sleep(5)
             if (modem):
                 modem.close()

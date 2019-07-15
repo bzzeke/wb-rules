@@ -1,5 +1,9 @@
 import os, sys, inspect, subprocess, socket, json, syslog, smtplib
 from email.message import EmailMessage
+import syslog
+
+LOG_ERR = syslog.LOG_ERR
+LOG_NOTICE = syslog.LOG_NOTICE
 
 def get_root():
     for teil in inspect.stack():
@@ -45,12 +49,12 @@ def send_sms(number, text):
         }).encode("utf-8"))
         data = sock.recv(1024)
         if (data == b"OK"):
-            syslog.syslog("DIO-SMS client: message was put to queue")
+            prnt("[sms_client]: message was put to queue")
             return True
 
-        syslog.syslog(syslog.LOG_ERR, "DIO-SMS client: message was not put to queue")
+        prnt("[sms_client]: message was not put to queue", LOG_ERR)
     except Exception as e:
-        syslog.syslog(syslog.LOG_ERR, "DIO-SMS client: %s" %e)
+        prnt("[sms_client]: %s" %e, LOG_ERR)
         raise
 
     return False
@@ -62,3 +66,11 @@ def import_env():
             parts = line.split("=", 2)
             if len(parts) == 2:
                 os.environ[parts[0].strip()] = parts[1].strip()
+
+def prnt(text, log_level=None):
+    print(text)
+    if (log_level == None):
+        log_level = syslog.LOG_NOTICE
+
+    syslog.syslog(log_level, text)
+

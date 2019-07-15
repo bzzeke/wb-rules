@@ -1,13 +1,13 @@
 import serial
 import time
 import datetime
-import syslog
 import os
 from curses import ascii
 from .pdu import decodeSmsPdu, encodeSmsSubmitPdu
 from .processor import Processor
 import re
 import codecs
+import util
 
 class Modem():
     port_speed = 115200
@@ -25,7 +25,7 @@ class Modem():
                     raise Exception("Failed to init modem")
 
         except serial.SerialException as e:
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to open modem, {}".format(e))
+            util.prnt("[sms_server]: failed to open modem, {}".format(e), util.LOG_ERR)
             raise
 
     def isOpen(self):
@@ -47,23 +47,23 @@ class Modem():
         # self.write(ascii.ctrl('z').encode())
         self.write("AT+CMGF=0\r")
         if (not self.getResponse("OK")):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to set PDU mode")
+            util.prnt("[sms_server]: failed to set PDU mode", util.LOG_ERR)
             return False
 
         self.write("AT+CNMI=2,1,0,0\r")
         if (not self.getResponse("OK")):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to set message receive notification")
+            util.prnt("[sms_server]: failed to set message receive notification", util.LOG_ERR)
             return False
 
         self.write("AT+CPMS=\"ME\",\"ME\",\"ME\"\r")
         if (not self.getResponse("OK")):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to set message storage")
+            util.prnt("[sms_server]: failed to set message storage", util.LOG_ERR)
             return False
 
         self.write("AT+CSCA?\r")
         response = self.getResponse("+CSCA:")
         if (not response):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to get SMSC number")
+            util.prnt("[sms_server]: failed to get SMSC number", util.LOG_ERR)
             return False
 
         m = re.search('"(.*?)"', response)
@@ -99,7 +99,7 @@ class Modem():
             index = self.getMessageIndex(line)
             number, text = self.readSMS(index)
             self.deleteSMS(index)
-            syslog.syslog("SMSD server: got message from {}".format(number))
+            util.prnt("[sms_server]: got message from {}".format(number))
 
             if (number and number == os.environ['PHONE']):
                 processor = Processor()
@@ -113,24 +113,24 @@ class Modem():
 
         self.write("AT+CMGS={}\r".format(pdu_decoded['tpdu_length']))
         if (not self.getResponse(">")):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to init SMS send")
+            util.prnt("[sms_server]: failed to init SMS send", util.LOG_ERR)
             return False
 
         self.write(str(pdu[0]))
         self.write(ascii.ctrl('z'))
 
         if (not self.getResponse("OK")):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to send PDU string")
+            util.prnt("[sms_server]: failed to send PDU string", util.LOG_ERR)
             return False
 
-        syslog.syslog("SMSD server: message sent to {}".format(number))
+        util.prnt("[sms_server]: message sent to {}".format(number))
         return True
 
     def deleteSMS(self, messageIndex):
         self.write("AT+CMGD={}\r".format(messageIndex))
 
         if (not self.getResponse("OK")):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to delete SMS")
+            util.prnt("[sms_server]: failed to delete SMS", util.LOG_ERR)
             return False
 
         return True
@@ -144,7 +144,7 @@ class Modem():
         body = self.read()
 
         if (not self.getResponse("OK")):
-            syslog.syslog(syslog.LOG_ERR, "SMSD server: failed to read SMS")
+            util.prnt("[sms_server]: failed to read SMS", util.LOG_ERR)
             return False
 
         pdu_decoded = decodeSmsPdu(body.strip())

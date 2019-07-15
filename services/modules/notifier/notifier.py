@@ -25,10 +25,12 @@ class EmlServer(SMTPServer):
             s.send_message(message)
             s.quit()
         except smtplib.SMTPException as e:
-            print("Error: unable to send email, %s" % e)
+            util.prnt("[notifier] Unable to send email, %s" % e.errno, util.LOG_ERR)
 
 def main():
+
     EmlServer(("0.0.0.0", 25), None)
+    util.prnt("[notifier] Starting...")
     try:
         asyncore.loop()
     except KeyboardInterrupt:

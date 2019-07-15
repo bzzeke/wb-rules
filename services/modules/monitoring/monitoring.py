@@ -7,6 +7,7 @@ import mosquitto as mqtt
 import threading
 import sys
 import util
+from modules.notifier.notifier import notify
 
 client = mqtt.Mosquitto()
 
@@ -51,7 +52,7 @@ class HostChecker:
         else:
             message = "Host is down: %s" % (address)
 
-        util.send_email(message)
+        notify(message)
 
     def loop(self):
         while True:
@@ -111,7 +112,7 @@ class DeviceChecker:
         else:
             message = "Device is down: %s" % (device)
 
-        util.send_email(message)
+        notify(message)
 
     def loop(self):
         while True:

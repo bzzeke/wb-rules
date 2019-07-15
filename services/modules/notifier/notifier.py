@@ -7,25 +7,30 @@ from datetime import datetime
 import asyncore
 from smtpd import SMTPServer
 import smtplib
-from modules.monitoring.monitoring import HostChecker
+from email.message import EmailMessage
 
 class EmlServer(SMTPServer):
-    no = 0
     def process_message(self, peer, mailfrom, rcpttos, data):
         message = smtplib.email.message_from_string(data)
-        result = HostChecker.tcp(os.environ["NOTIFYING_MAIL_SERVER"], 25)
-        if result:
-            self.forward(message)
-        else:
-            util.send_sms(os.environ["PHONE"], message.get_payload())
+        send(message)
 
-    def forward(self, message):
-        try:
-            s = smtplib.SMTP(os.environ["NOTIFYING_MAIL_SERVER"], 25)
-            s.send_message(message)
-            s.quit()
-        except smtplib.SMTPException as e:
-            util.prnt("[notifier] Unable to send email, %s" % e.errno, util.LOG_ERR)
+def notify(message):
+
+    msg = EmailMessage()
+    msg.set_content(message)
+    msg["Subject"] = "Alert"
+    msg["From"] = os.environ["FROM_EMAIL"]
+    msg["To"] = os.environ["NOTIFY_EMAIL"]
+    send(msg)
+
+def send(message):
+    try:
+        s = smtplib.SMTP(host=os.environ["NOTIFYING_MAIL_SERVER"], port=25, timeout=5)
+        s.send_message(message)
+        s.quit()
+    except Exception as e:
+        util.prnt("[notifier] Failed to send email, sending SMS: %s" % str(e), util.LOG_ERR)
+        util.send_sms(os.environ["PHONE"], message.get_payload())
 
 def main():
 

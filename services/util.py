@@ -1,5 +1,4 @@
 import os, sys, inspect, subprocess, socket, json, syslog, smtplib
-from email.message import EmailMessage
 import syslog
 
 LOG_ERR = syslog.LOG_ERR
@@ -22,22 +21,6 @@ def get_root():
         scriptdir = os.getcwd()
 
     return scriptdir
-
-def send_email(text):
-
-    msg = EmailMessage()
-    msg.set_content(text)
-
-    msg["Subject"] = "Alert"
-    msg["From"] = os.environ["FROM_EMAIL"]
-    msg["To"] = os.environ["NOTIFY_EMAIL"]
-
-    try:
-        s = smtplib.SMTP(os.environ["MAIL_SERVER"])
-        s.send_message(msg)
-        s.quit()
-    except smtplib.SMTPException as e:
-        send_sms(os.environ["PHONE"], text)
 
 def send_sms(number, text):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

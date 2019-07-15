@@ -25,7 +25,8 @@ class HostChecker:
         s.daemon = True
         s.start()
 
-    def tcp(self, host, port=65533, timeout=2):
+    @staticmethod
+    def tcp(host, port=65533, timeout=2):
         s = socket.socket()
         s.settimeout(timeout)
         result = False
@@ -41,7 +42,7 @@ class HostChecker:
                 result = True
         end = time.time()
         ms = 1000*(end-start)
-        return result, round(ms,2)
+        return result
 
     def notify(self, address, result):
 
@@ -56,7 +57,7 @@ class HostChecker:
         while True:
             for address in self.addresses:
                 host, port = address.split(":")
-                result, t = self.tcp(host, port)
+                result = HostChecker.tcp(host, port)
 
                 if address in self.last_state and self.last_state[address] != result:
                     self.notify(address, result)

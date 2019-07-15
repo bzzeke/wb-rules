@@ -1,0 +1,12 @@
+[Unit]
+Description=DIO:Notifier service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/wb-rules/services
+ExecStart=/etc/wb-rules/services/dio notifier
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

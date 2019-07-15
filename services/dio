@@ -13,7 +13,8 @@ available_modules = {
     "sms_server": "sms",
     "sms_client": "sms",
     "unify": True,
-    "ups": True
+    "ups": True,
+    "notifier": True
 }
 
 if len(sys.argv) > 1 and sys.argv[1] in available_modules:

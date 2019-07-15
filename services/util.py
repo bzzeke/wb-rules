@@ -9,7 +9,7 @@ def get_root():
             continue
         trc = teil[1]
 
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, "frozen", False):
         scriptdir, scriptname = os.path.split(sys.executable)
         return scriptdir
 
@@ -24,13 +24,16 @@ def send_email(text):
     msg = EmailMessage()
     msg.set_content(text)
 
-    msg['Subject'] = 'Alert'
-    msg['From'] = os.environ['FROM_EMAIL']
-    msg['To'] = os.environ['NOTIFY_EMAIL']
+    msg["Subject"] = "Alert"
+    msg["From"] = os.environ["FROM_EMAIL"]
+    msg["To"] = os.environ["NOTIFY_EMAIL"]
 
-    s = smtplib.SMTP(os.environ['MAIL_SERVER'])
-    s.send_message(msg)
-    s.quit()
+    try:
+        s = smtplib.SMTP(os.environ["MAIL_SERVER"])
+        s.send_message(msg)
+        s.quit()
+    except smtplib.SMTPException as e:
+        send_sms(os.environ["PHONE"], text)
 
 def send_sms(number, text):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -39,7 +42,7 @@ def send_sms(number, text):
         sock.sendall(json.dumps({
             "number": number,
             "text": text
-        }).encode('utf-8'))
+        }).encode("utf-8"))
         data = sock.recv(1024)
         if (data == b"OK"):
             syslog.syslog("DIO-SMS client: message was put to queue")
@@ -53,9 +56,9 @@ def send_sms(number, text):
     return False
 
 def import_env():
-    filepath = os.path.dirname(os.path.realpath(__file__)) + '/.env'
+    filepath = os.path.dirname(os.path.realpath(__file__)) + "/.env"
     with open(filepath) as fp:
         for cnt, line in enumerate(fp):
-            parts = line.split('=', 2)
+            parts = line.split("=", 2)
             if len(parts) == 2:
                 os.environ[parts[0].strip()] = parts[1].strip()

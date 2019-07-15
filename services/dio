@@ -25,7 +25,10 @@ if len(sys.argv) > 1 and sys.argv[1] in available_modules:
     else:
         module = sys.argv[1]
 
-    module = importlib.import_module("modules.%s.%s" % (module, sys.argv[1]))
-    module.main()
+    try:
+        module = importlib.import_module("modules.%s.%s" % (module, sys.argv[1]))
+        module.main()
+    except Exception as e:
+        util.prnt("[%s] global failure: %s" % (module, str(e)), util.LOG_ERR)
 else:
     print("Usage: dio cmd [flags]")

@@ -12,6 +12,8 @@ from email.message import EmailMessage
 class EmlServer(SMTPServer):
     def process_message(self, peer, mailfrom, rcpttos, data):
         message = smtplib.email.message_from_string(data)
+        message["To"] = rcpttos[0]
+        message["From"] = mailfrom
         send(message)
 
 def notify(message):

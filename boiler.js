@@ -10,6 +10,7 @@ var sensors = {
     'floor2': 'sensor_2/Temperature',
     'basement': 'sensor_0/Temperature',
     'boiler': 'boiler/Current Temperature',
+    'boiler_pump': 'boiler/Pump',
     'pressure': 'wb-adc/A1'
 };
 
@@ -36,8 +37,6 @@ defineAlias('boiler', relays.boiler);
 var heater_counter = 0;
 var start_date = 0;
 
-var TOUT_THRESHOULD = 35;
-var TEMP_THRESHOULD = 24;
 var HYSTERESIS_UP = 0;
 var HYSTERESIS_DOWN = 0.1;
 var PRESSURE_LOW_THRESHOULD = 0.2;
@@ -185,15 +184,15 @@ defineRule('th.checkPressure', {
     }
 });
 
-defineRule('th.checkBoilerTemperature', {
+defineRule('th.checkPumps', {
     whenChanged: [
-        sensors.boiler
+        sensors.boiler_pump
     ],
     then: function (newValue, devName, cellName) {
         /*if (!dev['thermostat']['Enabled']) {
             return;
         } */       
-        if (boiler == 0 && newValue < TOUT_THRESHOULD) {
+        if (boiler == 0 && newValue == 0) {
             pump1 = 0;
             pump2 = 0;      
             pumpBasement = 0;      
@@ -339,3 +338,4 @@ function splitDevice(device)
         'cell': elements[1]
     }
 }
+

@@ -1,0 +1,275 @@
+[
+    {
+        "name": "Monitoring",
+        "type": "cells",
+        "dataSets": [
+            {
+                "name": "Hosts",
+                "query": {
+                    "type": "last",
+                    "regexp": "\\/monitoring\\/hosts\\/*"
+                }
+            },
+            {
+                "name": "Devices",
+                "query": {
+                    "type": "last",
+                    "regexp": "\\/monitoring\\/devices\\/*"
+                }
+            }
+        ]
+    },
+    {
+        "name": "Daily power consumption",
+        "type": "bar",
+        "leftUnit": "kW*h",
+        "interval": "7d",
+        "dataSets": [
+            {
+                "name": "Day",
+                "query": {
+                    "type": "diff",
+                    "group": "1d",
+                    "topic": "/devices/power_meter/controls/Total power day"
+                }
+            },
+            {
+                "name": "Night",
+                "query": {
+                    "type": "diff",
+                    "group": "1d",
+                    "topic": "/devices/power_meter/controls/Total power night"
+                }
+            }
+        ]
+    },
+    {
+        "name": "Monthly power consumption",
+        "type": "bar",
+        "leftUnit": "kW*h",
+        "interval": "6m",
+        "dataSets": [
+            {
+                "name": "Day",
+                "query": {
+                    "type": "diff",
+                    "group": "1d",
+                    "topic": "/devices/power_meter/controls/Total power day"
+                }
+            },
+            {
+                "name": "Night",
+                "query": {
+                    "type": "diff",
+                    "group": "1d",
+                    "topic": "/devices/power_meter/controls/Total power night"
+                }
+            }
+        ]
+    },
+    {
+        "name": "Climate",
+        "type": "line",
+        "leftUnit": "°C",
+        "rightUnit": "%H",
+        "interval": "1d",
+        "dataSets": [
+            {
+                "name": "Basement",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_0/controls/Temperature"
+                }
+            },
+            {
+                "name": "Floor 1",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_1/controls/Temperature"
+                }
+            },
+            {
+                "name": "Floor 2",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_2/controls/Temperature"
+                }
+            },
+            {
+                "name": "Outside",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                }
+            },
+            {
+                "name": "Garret",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-w1/controls/28-001416f342ff"
+                }
+            },
+            {
+                "name": "Bath",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-w1/controls/28-0014175dd1ff"
+                }
+            },
+            {
+                "name": "Basement Humidity",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_0/controls/Humidity"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "Floor 1 Humidity",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_1/controls/Humidity"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "Floor 2 Humidity",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_2/controls/Humidity"
+                },
+                "axis": "right"
+            }
+        ]
+    },
+    {
+        "name": "Power",
+        "type": "line",
+        "leftUnit": "V",
+        "rightUnit": "A",
+        "interval": "1d",
+        "dataSets": [
+            {
+                "name": "U1",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-map3h_116/controls/Urms L1"
+                }
+            },
+            {
+                "name": "U2",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-map3h_116/controls/Urms L2"
+                }
+            },
+            {
+                "name": "U3",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-map3h_116/controls/Urms L3"
+                }
+            },
+            {
+                "name": "I1",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-map3h_116/controls/Irms L1"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "I2",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-map3h_116/controls/Irms L2"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "I3",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/wb-map3h_116/controls/Irms L3"
+                },
+                "axis": "right"
+            }
+        ]
+    },
+    {
+        "name": "Air",
+        "type": "line",
+        "leftUnit": "ppm",
+        "rightUnit": "ppb",
+        "interval": "1d",
+        "dataSets": [
+            {
+                "name": "Basement",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_0/controls/CO2"
+                }
+            },
+            {
+                "name": "Floor 1",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_1/controls/CO2"
+                }
+            },
+            {
+                "name": "Floor 2",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_2/controls/CO2"
+                }
+            },
+            {
+                "name": "Basement Air Quality",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_0/controls/Air Quality (VOC)"
+                },
+                "axis": "right"
+            }
+        ]
+    }
+]

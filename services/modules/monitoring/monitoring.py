@@ -27,22 +27,22 @@ class HostChecker:
         s.start()
 
     @staticmethod
-    def tcp(host, port=65533, timeout=2):
+    def tcp(host, port=65533, timeout=2, tries=0):
+        max_tries = 3
         s = socket.socket()
         s.settimeout(timeout)
         result = False
-        end = None
         try:
-            start = time.time()
             s.connect((host, int(port)))
             s.close()
             result = True
-            end = time.time()
         except Exception as e:
             if e == socket.errno.ECONNREFUSED:
                 result = True
-        end = time.time()
-        ms = 1000*(end-start)
+
+        if result == False and tries < max_tries:
+            return HostChecker.tcp(host, port, timeout, tries + 1)
+
         return result
 
     def notify(self, address, result):

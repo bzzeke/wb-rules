@@ -26,6 +26,10 @@ defineVirtualDevice('util', {
         'Basement Air Quality': {
             type: 'text',
             value: ''
+        },
+        'Test': {
+            type: 'temperature',
+            value: 0
         }
     }
 });

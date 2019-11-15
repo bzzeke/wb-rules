@@ -316,16 +316,16 @@ function managePumps(temp, thermo, tempDev)
 
 function managePumpSimple(sensor)
 {
-    var device = splitDevice(sensors);
+    var device = splitDevice(sensor);
     var temp = dev[device['device']][device['cell']];
     var thermo = dev['thermostat'][devicesByTemperature[sensor]['thermo']];
-    
+
     if (temp < thermo - HYSTERESIS_DOWN && pumpValueByTemp(sensor) == 0) {
         pumpValueByTemp(sensors.floor1, 1);
         pumpValueByTemp(sensors.floor2, 1);
         pumpValueByTemp(sensors.basement, 1);
         switchBoiler(true);
-    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(sensors) == 1) {
+    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(sensor) == 1) {
         switchBoiler(false);
     }  
 }

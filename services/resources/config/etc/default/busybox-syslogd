@@ -3,7 +3,7 @@
 
 # Additional options that are passed to the daemons.  Default is to log
 # to ring buffer (to be read with logread(1)) and drop duplicates.
-. /etc/wb-rules/scripts/.env
+. /etc/wb-rules/services/.env
 
 SYSLOG_OPTS="-R $LOGGER_HOST:$LOGGER_PORT -L"
 KLOG_OPTS=""

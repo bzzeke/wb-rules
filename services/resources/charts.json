@@ -271,5 +271,56 @@
                 "axis": "right"
             }
         ]
+    },
+    {
+        "name": "Boiler work time",
+        "type": "combined",
+        "leftUnit": "Hours",
+        "rightUnit": "°C",
+        "interval": "7d",
+        "dataSets": [
+            {
+                "name": "Work",
+                "type": "bar",
+                "convertFunction": "convertTrigger",
+                "query": {
+                    "type": "plain",
+                    "topic": "/devices/relays/controls/K8"
+                }
+            },
+            {
+                "name": "Mean temperature",
+                "type": "line",
+                "query": {
+                    "type": "linear",
+                    "function": "mean",
+                    "group": "1d",
+                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "Min temperature",
+                "type": "line",
+                "query": {
+                    "type": "linear",
+                    "function": "min",
+                    "group": "1d",
+                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "Max temperature",
+                "type": "line",
+                "query": {
+                    "type": "linear",
+                    "function": "max",
+                    "group": "1d",
+                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                },
+                "axis": "right"
+            }
+        ]
     }
 ]

@@ -86,7 +86,7 @@ def cell_get_status_topic(id):
     device, cell = id.split("/")
     return "/devices/%s/controls/%s" % (device, cell)
 
-def cell_get_payload_topic(id):
+def cell_get_action_topic(id):
     status = cell_get_status_topic(id)
     return "%s/on" % (status)
 
@@ -131,14 +131,14 @@ def getwidgets():
                 control = {
                     "title": cell_get_name(cell),
                     "type": cell_get_type(cell),
-                    "status": cell_get_status_topic(cell["id"])
+                    "statusTopic": cell_get_status_topic(cell["id"])
                 }
 
                 if control["type"] != "switch":
                     control["format"] = cell_get_format(cell)
 
                 if control["type"] in ["slider", "switch"]:
-                    control["payload"] = cell_get_payload_topic(cell["id"])
+                    control["actionTopic"] = cell_get_action_topic(cell["id"])
 
                 if control["type"] == "slider":
                     control = cell_get_range_data(control, cell)

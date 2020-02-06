@@ -111,6 +111,15 @@
                 }
             },
             {
+                "name": "Outside Airport",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/weather/controls/ULN temperature"
+                }
+            },
+            {
                 "name": "Garret",
                 "query": {
                     "type": "linear",

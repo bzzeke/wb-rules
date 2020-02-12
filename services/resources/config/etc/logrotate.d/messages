@@ -1,0 +1,7 @@
+/var/log/messages {
+  daily
+  compress
+  rotate 3
+  missingok
+  maxsize 10M
+}

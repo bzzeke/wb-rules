@@ -5,14 +5,18 @@ import util
 import contextlib
 import io
 import modules.unify.unify as unify
+from datetime import datetime
 
 class Processor():
     def __log(self, text):
         with open(os.environ['SMSD_LOG'], 'a') as file:
-            file.write(text + '\n')
+            time_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            file.write(time_string + " " + text + '\n')
 
     def __send(self, text):
-        return util.send_sms(os.environ['PHONE'], text)
+        status = util.send_sms(os.environ['PHONE'], text)
+        status_msg = "[Sent]" if status else "[Failed]"
+        self.__log(status_msg + '\n' + text)
 
     def reboot(self):
         try:
@@ -21,13 +25,11 @@ class Processor():
         except subprocess.CalledProcessError as exc:
             text = "Failed to reboot [{}]".format(exc.output.decode())
 
-        self.__log(text)
-        self.__log("Sent" if self.__send(text) else "Failed")
+        self.__send(text)
 
     def ping(self):
         text = 'pong'
-        self.__log(text)
-        self.__log("Sent" if self.__send(text) else "Failed")
+        self.__send(text)
 
     def reboot_switch(self):
 
@@ -41,8 +43,7 @@ class Processor():
         else:
             text = "Failed to reboot switch [{}]".format(f.getvalue())
 
-        self.__log(text)
-        self.__log("Sent" if self.__send(text) else "Failed")
+        self.__send(text)
 
     def switch_ports(self):
 
@@ -57,5 +58,4 @@ class Processor():
             text = "Failed to switch ports [{}]".format(f.getvalue())
 
 
-        self.__log(text)
-        self.__log("Sent" if self.__send(text) else "Failed")
+        self.__send(text)

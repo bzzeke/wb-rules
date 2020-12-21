@@ -20,7 +20,7 @@
         ]
     },
     {
-        "name": "Daily power consumption",
+        "name": "Power daily",
         "type": "bar",
         "leftUnit": "kW*h",
         "interval": "7d",
@@ -44,7 +44,7 @@
         ]
     },
     {
-        "name": "Monthly power consumption",
+        "name": "Power monthly",
         "type": "bar",
         "leftUnit": "kW*h",
         "interval": "6m",
@@ -170,7 +170,7 @@
         ]
     },
     {
-        "name": "Power",
+        "name": "Power now",
         "type": "line",
         "leftUnit": "V",
         "rightUnit": "A",
@@ -282,7 +282,7 @@
         ]
     },
     {
-        "name": "Boiler work time",
+        "name": "Boiler",
         "type": "combined",
         "leftUnit": "Hours",
         "rightUnit": "°C",

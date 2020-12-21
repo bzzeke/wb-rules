@@ -15,7 +15,8 @@ available_modules = {
     "unify": True,
     "ups": True,
     "notifier": True,
-    "weather": True
+    "weather": True,
+    "topic_mapper": True
 }
 
 if len(sys.argv) > 1 and sys.argv[1] in available_modules:

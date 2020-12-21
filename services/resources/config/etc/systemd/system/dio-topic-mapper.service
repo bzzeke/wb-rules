@@ -1,0 +1,12 @@
+[Unit]
+Description=DIO:Topic mapper daemon
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/wb-rules/services
+ExecStart=/etc/wb-rules/services/dio topic_mapper
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

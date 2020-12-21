@@ -12,6 +12,7 @@ class Processor():
         with open(os.environ['SMSD_LOG'], 'a') as file:
             time_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             file.write(time_string + " " + text + '\n')
+            util.prnt("[processor] " + text)
 
     def __send(self, text):
         status = util.send_sms(os.environ['PHONE'], text)

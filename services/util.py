@@ -51,6 +51,7 @@ def import_env():
                 os.environ[parts[0].strip()] = parts[1].strip()
 
 def prnt(text, log_level=None):
+    text = "[WB]" + text
     print(text)
     if (log_level == None):
         log_level = syslog.LOG_NOTICE

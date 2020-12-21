@@ -14,7 +14,7 @@ def req(url, headers = {}):
     req = urllib.request.Request(url, headers=headers, method="GET")
 
     try:
-        response = urllib.request.urlopen(req)
+        response = urllib.request.urlopen(req, None, 2)
 
         if response.getcode() == 200:
             return json.loads(response.read().decode("utf-8"))

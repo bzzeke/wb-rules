@@ -5,6 +5,10 @@ import util
 import contextlib
 import io
 import modules.unify.unify as unify
+import requests
+import urllib3
+urllib3.disable_warnings()
+
 from datetime import datetime
 
 class Processor():
@@ -21,10 +25,13 @@ class Processor():
 
     def reboot(self):
         try:
-            output = subprocess.check_output('ssh -i {} {} "/system reboot"'.format(os.environ['MIKROTIK_KEY'], os.environ['MIKROTIK_URL']), stderr=subprocess.STDOUT, shell=True)
-            text = "Rebooted successfuly [{}]".format(output.decode())
-        except subprocess.CalledProcessError as exc:
-            text = "Failed to reboot [{}]".format(exc.output.decode())
+            s = requests.Session()
+            r = s.post(os.environ["ROUTER_URL"], data={"username": os.environ["ROUTER_USER"], "password": os.environ["ROUTER_PASSWORD"]}, verify=False)
+            r = s.post("{}/api/edge/operation/reboot.json".format(os.environ["ROUTER_URL"]), headers={"X-CSRF-TOKEN": s.cookies['X-CSRF-TOKEN']})
+
+            text = "Rebooted successfuly [{}]".format(r.text)
+        except Exception as exc:
+            text = "Failed to reboot [{}]".format(str(exc))
 
         self.__send(text)
 

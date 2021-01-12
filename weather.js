@@ -27,10 +27,11 @@ defineRule("weather.status", {
         runShellCommand("/etc/wb-rules/services/dio weather", {
             captureOutput: true,
             exitCallback: function (exitCode, capturedOutput) {
+
                 var data = JSON.parse(capturedOutput);
-                dev['weather']['LIM AQ'] = data['air_quality'] || 0
-                dev['weather']['ULN wind'] = data['wind'] || 0;
-                dev['weather']['ULN wind direction'] = data['wind_direction'] || 0;
+                dev['weather']['LIM AQ'] = data['air_quality'].toString() || 0
+                dev['weather']['ULN wind'] = data['wind'].toString() || 0;
+                dev['weather']['ULN wind direction'] = data['wind_direction'].toString() || 0;
                 dev['weather']['ULN temperature'] = data['temperature'] || 0;
             }
         });

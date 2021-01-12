@@ -98,9 +98,9 @@ defineRule("_cry_alarm", {
 defineRule("_garage_relay", {
     whenChanged: ["garage/Relay 1"],
     then: function(newValue, devName, cellName) {
-        if (newValue == 1) {
+        if (newValue == true) {
             setTimeout(function() {
-                dev[devName][cellName] = 0;
+                dev[devName][cellName] = false;
             }, 1000);
         }
     }

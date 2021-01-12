@@ -52,9 +52,9 @@ defineRule('ws.switchHeater', {
         if (heaterStatusChanged) {
             heaterStatusChanged = false;
         } else {
-            waterHeaterRelay = 1;
+            waterHeaterRelay = true;
             setTimeout(function() {
-                waterHeaterRelay = 0;
+                waterHeaterRelay = false;
             }, 1000);
         }
     }

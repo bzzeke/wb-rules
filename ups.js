@@ -28,8 +28,9 @@ defineRule("ups.status", {
             captureOutput: true,
             exitCallback: function (exitCode, capturedOutput) {
                 var data = JSON.parse(capturedOutput);
-                dev['ups']['Battery charge'] = data['battery.charge'] || 0;
-                dev['ups']['Input voltage'] = data['input.voltage'] || 0;
+
+                dev['ups']['Battery charge'] = data['battery.charge'].toString() || 0;
+                dev['ups']['Input voltage'] = parseFloat(data['input.voltage']) || 0;
                 dev['ups']['Load'] = data['ups.load'] ? data['ups.load'] + '%' : 0;
 
 		if (data['ups.status']) {

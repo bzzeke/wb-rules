@@ -86,7 +86,7 @@ defineVirtualDevice('thermostat', {
 defineRule('th.counter', {
     whenChanged: [relays.boiler],
     then: function (newValue, devName, cellName) {
-        if (newValue == 1) {
+        if (newValue == true) {
             start_date = Math.floor(Date.now() / 1000);
         } else {
             heater_counter += Math.floor(Date.now() / 1000) - start_date;
@@ -102,7 +102,7 @@ defineRule("th.counterSummary", {
             heater_counter += Math.floor(Date.now() / 1000) - start_date;
             start_date = Math.floor(Date.now() / 1000);
         }
-        dev['thermostat']['Work time'] = heater_counter;
+        dev['thermostat']['Work time'] = heater_counter.toString();
         heater_counter = 0;
     }
 });
@@ -134,6 +134,7 @@ defineRule('th.switchPumpsByThermostat', {
         'thermostat/Basement'
     ],
     then: function (newValue, devName, cellName) {
+
         if (!dev['thermostat']['Enabled']) {
             return;
         }
@@ -192,10 +193,10 @@ defineRule('th.checkPumps', {
         /*if (!dev['thermostat']['Enabled']) {
             return;
         } */       
-        if (boiler == 0 && newValue == 0) {
-            pump1 = 0;
-            pump2 = 0;      
-            pumpBasement = 0;      
+        if (boiler == false && newValue == false) {
+            pump1 = false;
+            pump2 = false;      
+            pumpBasement = false;      
         }
     }
 });
@@ -205,9 +206,9 @@ defineRule("th.shutdownBoiler", {
     then: function (newValue, devName, cellName) {
         if (newValue == false) {
             switchBoiler(false);
-            pump1 = 0;
-            pump2 = 0;
-            pumpBasement = 0;
+            pump1 = false;
+            pump2 = false;
+            pumpBasement = false;
         }
     }
 });
@@ -219,12 +220,12 @@ defineRule('th.checkPeriodical', {
     ],
     then: function (newValue, devName, cellName) {
         if (newValue == true) {
-            dev['thermostat']['Enabled'] = 0;
+            dev['thermostat']['Enabled'] = false;
         } else {
             switchBoiler(false);
-            pump1 = 0;
-            pump2 = 0;
-            pumpBasement = 0;  
+            pump1 = false;
+            pump2 = false;
+            pumpBasement = false;  
     }
     }
 });
@@ -232,7 +233,7 @@ defineRule('th.checkPeriodical', {
 defineRule("th.enablePeriodical", {
     asSoonAs: 
         function () {
-        if (dev['thermostat']['Periodical'] == 0) {
+        if (dev['thermostat']['Periodical'] == false) {
         return false;
         }
             var date = new Date();
@@ -240,9 +241,9 @@ defineRule("th.enablePeriodical", {
         }
     ,
     then: function () {
-        pumpValueByTemp(sensors.floor1, 1);
-        pumpValueByTemp(sensors.floor2, 1);
-        pumpValueByTemp(sensors.basement, 1);
+        pumpValueByTemp(sensors.floor1, true);
+        pumpValueByTemp(sensors.floor2, true);
+        pumpValueByTemp(sensors.basement, true);
         switchBoiler(true);
     }
 });
@@ -251,7 +252,7 @@ defineRule("th.enablePeriodical", {
 defineRule("th.disablePeriodical", {
     asSoonAs: 
         function () {
-        if (dev['thermostat']['Periodical'] == 0) {
+        if (dev['thermostat']['Periodical'] == false) {
         return false;
         }
             var date = new Date();
@@ -268,13 +269,13 @@ function pumpsEnabled()
 {
     var c = 0;
 
-    if (pump1 == 1) {
+    if (pump1 == true) {
         c++;
     }
-    if (pump2 == 1) {
+    if (pump2 == true) {
         c++;
     }
-    if (pumpBasement == 1) {
+    if (pumpBasement == true) {
         c++;
     }
     return c;
@@ -282,15 +283,16 @@ function pumpsEnabled()
 
 function switchBoiler(enable)
 {
-    if (enable && boiler == 0) {
-        boiler = 1;
-    } else if (!enable && boiler == 1) {
-        boiler = 0;
+    if (enable && boiler == false) {
+        boiler = true;
+    } else if (!enable && boiler == true) {
+        boiler = false;
     }
 }
 
 function pumpValueByTemp(tempDev, value)
 {
+
     var relay = devicesByTemperature[tempDev]['relay'];
 
     if (value === undefined) {
@@ -301,15 +303,15 @@ function pumpValueByTemp(tempDev, value)
 }
 
 function managePumps(temp, thermo, tempDev)
-{    
+{
     if (temp < thermo - HYSTERESIS_DOWN) {
-        pumpValueByTemp(tempDev, 1);
+        pumpValueByTemp(tempDev, true);
         switchBoiler(true);
-    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(tempDev) == 1) {
+    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(tempDev) == true) {
         if (pumpsEnabled() == 1) {
             switchBoiler(false);
         } else {
-            pumpValueByTemp(tempDev, 0);
+            pumpValueByTemp(tempDev, false);
         }
     }
 }
@@ -320,12 +322,12 @@ function managePumpSimple(sensor)
     var temp = dev[device['device']][device['cell']];
     var thermo = dev['thermostat'][devicesByTemperature[sensor]['thermo']];
 
-    if (temp < thermo - HYSTERESIS_DOWN && pumpValueByTemp(sensor) == 0) {
-        pumpValueByTemp(sensors.floor1, 1);
-        pumpValueByTemp(sensors.floor2, 1);
-        pumpValueByTemp(sensors.basement, 1);
+    if (temp < thermo - HYSTERESIS_DOWN && pumpValueByTemp(sensor) == false) {
+        pumpValueByTemp(sensors.floor1, true);
+        pumpValueByTemp(sensors.floor2, true);
+        pumpValueByTemp(sensors.basement, true);
         switchBoiler(true);
-    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(sensor) == 1) {
+    } else if (temp > thermo + HYSTERESIS_UP && pumpValueByTemp(sensor) == true) {
         switchBoiler(false);
     }  
 }
@@ -338,4 +340,3 @@ function splitDevice(device)
         'cell': elements[1]
     }
 }
-

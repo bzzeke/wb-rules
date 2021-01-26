@@ -36,7 +36,7 @@ class Server(BaseHTTPRequestHandler):
         self.end_headers()
 
         return json.dumps({
-            "status": "ok",
+            "success": True,
             "results": getwidgets()
         }).encode("utf-8")
 
@@ -45,18 +45,18 @@ class Server(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/json")
         self.end_headers()
 
-        status = "failed"
-        description = "File not found"
+        success = False
+        message = "File not found"
         charts = []
         with open(os.environ["CHARTS_FILE"]) as f:
             chart_data = f.read()
             charts = json.loads(chart_data)
-            status = "ok"
-            description = ""
+            success = True
+            message = ""
 
         return json.dumps({
-            "status": status,
-            "description": description,
+            "success": success,
+            "message": message,
             "results": charts
         }).encode("utf-8")
 

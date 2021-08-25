@@ -3,7 +3,8 @@ var heaterStatusChanged = false;
 var waterSupply = {
     'heaterStatus': 'leak_sensor/S1',
     'heaterRelay': 'leak_sensor/K1',
-    'pressure': 'wb-adc/A2'
+    'pressure': 'wb-adc/A2',
+    'vcc': 'wb-adc/5Vout'
 };
 
 defineAlias('waterHeaterStatus', waterSupply.heaterStatus);
@@ -27,9 +28,9 @@ defineVirtualDevice('water_supply', {
 defineRule('ws.pressure', {
     whenChanged: [waterSupply.pressure],
     then: function (newValue, devName, cellName) {
-        var coefficient = 1.30459;
-        var shift = -0.500871;
-        var pressure = (coefficient * newValue + shift).toFixed(1);
+        // https://pcus.ru/image/cache/catalog/products/sensors/other/4225_7-1000x1340.jpg
+        // Vout = Vcc(0.75 * P + 0.1)
+      	var pressure = (10 * (parseFloat(newValue) / parseFloat(dev[waterSupply.vcc]) - 0.1) / 0.75).toFixed(1);
         if (pressure != dev.water_supply['Pressure']) {
             dev.water_supply['Pressure'] = pressure;
         }

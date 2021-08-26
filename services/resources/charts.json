@@ -107,7 +107,7 @@
                     "type": "linear",
                     "function": "last",
                     "group": "5m",
-                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                    "topic": "/devices/sensor_outside/controls/Temperature"
                 }
             },
             {
@@ -125,7 +125,7 @@
                     "type": "linear",
                     "function": "last",
                     "group": "5m",
-                    "topic": "/devices/wb-w1/controls/28-001416f342ff"
+                    "topic": "/devices/sensor_garret/controls/Temperature"
                 }
             },
             {
@@ -134,7 +134,7 @@
                     "type": "linear",
                     "function": "last",
                     "group": "5m",
-                    "topic": "/devices/wb-w1/controls/28-0014175dd1ff"
+                    "topic": "/devices/sensor_bathhouse/controls/Temperature"
                 }
             },
             {
@@ -166,7 +166,27 @@
                     "topic": "/devices/sensor_2/controls/Humidity"
                 },
                 "axis": "right"
-            }
+            },
+            {
+                "name": "Outside Humidity",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_outside/controls/Humidity"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "Bathhouse Humidity",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_bathhouse/controls/Humidity"
+                },
+                "axis": "right"
+            },
         ]
     },
     {
@@ -270,12 +290,41 @@
                 }
             },
             {
+                "name": "Bathhouse",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_bathhouse/controls/CO2"
+                },
+            },
+            {
                 "name": "Basement Air Quality",
                 "query": {
                     "type": "linear",
                     "function": "last",
                     "group": "5m",
                     "topic": "/devices/sensor_0/controls/Air Quality (VOC)"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "Floor 2 Air Quality",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_2/controls/Air Quality (VOC)"
+                },
+                "axis": "right"
+            },
+            {
+                "name": "Bathhouse Air Quality",
+                "query": {
+                    "type": "linear",
+                    "function": "last",
+                    "group": "5m",
+                    "topic": "/devices/sensor_bathhouse/controls/Air Quality (VOC)"
                 },
                 "axis": "right"
             }
@@ -304,7 +353,7 @@
                     "type": "linear",
                     "function": "mean",
                     "group": "1d",
-                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                    "topic": "/devices/sensor_outside/controls/Temperature"
                 },
                 "axis": "right"
             },
@@ -315,7 +364,7 @@
                     "type": "linear",
                     "function": "min",
                     "group": "1d",
-                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                    "topic": "/devices/sensor_outside/controls/Temperature"
                 },
                 "axis": "right"
             },
@@ -326,7 +375,7 @@
                     "type": "linear",
                     "function": "max",
                     "group": "1d",
-                    "topic": "/devices/wb-w1/controls/28-001417357bff"
+                    "topic": "/devices/sensor_outside/controls/Temperature"
                 },
                 "axis": "right"
             }

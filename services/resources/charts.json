@@ -186,7 +186,7 @@
                     "topic": "/devices/sensor_bathhouse/controls/Humidity"
                 },
                 "axis": "right"
-            },
+            }
         ]
     },
     {
@@ -296,7 +296,7 @@
                     "function": "last",
                     "group": "5m",
                     "topic": "/devices/sensor_bathhouse/controls/CO2"
-                },
+                }
             },
             {
                 "name": "Basement Air Quality",

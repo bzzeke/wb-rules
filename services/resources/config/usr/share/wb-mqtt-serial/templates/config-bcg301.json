@@ -1,0 +1,158 @@
+// Configuration options
+{
+    "device_type":"OpenThermMBGateway",
+	"device":{
+	    "name":"OT Modbus Gateway BCG301",
+	    "id":"BCG301",
+	    "enabled": true,
+	    "channels": [
+		{
+		    "name": "OT_Vers",
+		    "type": "value",
+		    "reg_type": "holding",
+		    "address": 1015,
+		    "format": "u16",
+		    "scale": 0.01,
+		    "offset": 0
+		},
+		{
+		    "name": "OT_ModbusAdress",
+		    "type": "value",
+		    "reg_type": "holding",
+		    "address": 1003,
+		    "format": "u16",
+		    "scale": 1,
+		    "offset": 0
+		},
+		{
+		  "name": "OT_Status",
+		  "type": "value",
+		  "reg_type": "holding",
+		  "address": 1004,
+		  "format": "u8",
+		  "scale": 1,
+		  "offset": 0
+		},
+		{
+		  "name": "OT_Config",
+		  "type": "value",
+		  "reg_type": "holding",
+		  "address": 1005,
+		  "format": "u8",
+		  "scale": 1,
+		  "offset": 0
+		},
+		{
+		  "name": "OT_Error",
+		  "type": "value",
+		  "reg_type": "holding",
+		  "address": 1006,
+		  "format": "u8",
+		  "scale": 1,
+		  "offset": 0
+		},
+		{
+		  "name": "OT_Modulation",
+		  "type": "value",
+		  "reg_type": "holding",
+		  "address": 1007,
+		  "format": "u16",
+		  "scale": 0.003906,
+		  "offset": 0,
+		  "channel_readonly": true,
+		  "round_to": 1
+		},
+		{
+		  "name": "OT_BoilerTemperature",
+		  "type": "temperature",
+		  "reg_type": "holding",
+		  "address": 1010,
+		  "format": "u16",
+		  "scale": 0.003906,
+		  "offset": 0,
+		  "round_to": 0.01
+		},
+		{
+		  "name": "OT_WaterPressure",
+		  "type": "value",
+		  "reg_type": "holding",
+		  "address": 1008,
+		  "format": "u16",
+		  "scale": 0.003906,
+		  "offset": 0,
+		  "round_to": 0.01
+		},
+		{
+		  "name": "OT_DHWsetPoint",
+		  "type": "range",
+		  "reg_type": "holding",
+		  "address": 1024,
+		  "format": "u16",
+		  "scale": 0.003906,
+		  "offset": 0,
+		  "round_to": 0.1,
+		  "max": "80"
+		},
+		{
+		  "name": "OT_DHWtemp",
+		  "type": "temperature",
+		  "reg_type": "holding",
+		  "address": 1011,
+		  "format": "u16",
+		  "scale": 0.003906,
+		  "offset": 0,
+		  "round_to": 0.01
+		},
+		{
+		  "name": "OT_ErrorOEM",
+		  "type": "value",
+		  "reg_type": "holding",
+		  "address": 1014,
+		  "format": "u16",
+		  "scale": 1,
+		  "offset": 0
+		},
+		{
+		  "name": "OT_GateMode",
+		  "type": "switch",
+		  "reg_type": "coil",
+		  "address": 1004,
+		  "format": "u16",
+		  "scale": 1,
+		  "offset": 0,
+		  "channel_readonly": false
+		},
+		{
+		  "name": "OT_ExtErrorOverheat",
+		  "type": "value",
+		  "reg_type": "coil",
+		  "address": 1024,
+		  "format": "u16",
+		  "scale": 1,
+		  "offset": 0,
+		  "channel_readonly": true
+		},
+		{
+		  "name": "OT_ExtErrorLowPressure",
+		  "type": "value",
+		  "reg_type": "coil",
+		  "address": 1022,
+		  "format": "u16",
+		  "scale": 1,
+		  "offset": 0,
+		  "channel_readonly": true
+		},
+		{
+		  "name": "OT_ControlSetpoint",
+		  "type": "range",
+		  "reg_type": "holding",
+		  "address": 1018,
+		  "format": "u16",
+		  "scale": 0.003906,
+		  "offset": 0,
+		  "max": 80,
+		  "round_to": 1
+		}
+	    ]
+	}
+}
